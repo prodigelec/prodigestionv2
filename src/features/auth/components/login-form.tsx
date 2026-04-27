@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useState, startTransition } from "react";
 import { loginAction } from "@/features/auth/actions/auth";
 import { loginSchema } from "@/features/auth/validations/auth";
 import { toast } from "sonner";
@@ -42,8 +42,12 @@ export function LoginForm() {
     setClientErrors({});
     
     // Si la validation passe, on lance la Server Action
-    formAction(formData);
-    toast.success("Connexion réussie");
+    startTransition(() => {
+      formAction(formData);
+    });
+    
+    // On ne met pas de toast de succès ici car on attend le retour de la Server Action
+    // S'il y a succès, on sera redirigé
   };
 
   const errors = { ...clientErrors, ...state?.fieldErrors };
