@@ -8,8 +8,12 @@ async function main() {
   // Dynamically import prisma so that env variables are loaded first
   const { prisma } = await import('../src/app/lib/db');
   
-  const email = 'ProdigMaster@contact.fr';
-  const password = 'Broue287892*';
+  const email = process.env.ADMIN_EMAIL;
+  const password = process.env.ADMIN_PASSWORD;
+
+  if (!email || !password) {
+    throw new Error('ADMIN_EMAIL et ADMIN_PASSWORD doivent être définis dans le fichier .env');
+  }
   
   const passwordHash = await bcrypt.hash(password, 10);
 
