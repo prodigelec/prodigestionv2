@@ -18,7 +18,7 @@ export default function LoginPage() {
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className=" rounded-2xl p-8 shadow-sm border border-border bg-surface">
+        <div className=" rounded-2xl p-8 shadow-sm border border-border bg-surface text-font-sans">
           <LoginForm />
         </div>
       </div>
