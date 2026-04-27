@@ -1,4 +1,4 @@
-import { LoginForm } from "@/components/auth/login-form";
+import { LoginForm } from "@/features/auth/components/login-form";
 
 export const metadata = {
   title: "Connexion | Prodigestion",
@@ -7,15 +7,18 @@ export const metadata = {
 
 export default function LoginPage() {
   return (
-    <div className="flex min-h-screen flex-col justify-center py-12 sm:px-6 lg:px-8 bg-gray-50">
+    <div className="flex min-h-screen flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
-          Connectez-vous à votre compte
+        <h2 className="mt-6 text-center text-3xl tracking-tight text-foreground text-font-sans">
+          ProdiGestion
         </h2>
+        <p className="mt-2 text-center text-sm text-foreground text-font-sans">
+          Connectez-vous à votre compte
+        </p>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+        <div className=" rounded-2xl p-8 shadow-sm border border-border bg-surface">
           <LoginForm />
         </div>
       </div>

@@ -1,8 +1,8 @@
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
-import { loginAction } from "@/app/actions/auth";
-import { loginSchema } from "@/app/lib/validations/auth";
+import { loginAction } from "@/features/auth/actions/auth";
+import { loginSchema } from "@/features/auth/validations/auth";
 import { toast } from "sonner";
 
 export function LoginForm() {
@@ -35,6 +35,7 @@ export function LoginForm() {
         }
       });
       setClientErrors(newErrors);
+      toast.error(error.message);
       return;
     }
 
@@ -42,16 +43,17 @@ export function LoginForm() {
     
     // Si la validation passe, on lance la Server Action
     formAction(formData);
+    toast.success("Connexion réussie");
   };
 
   const errors = { ...clientErrors, ...state?.fieldErrors };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 w-full max-w-md">
-      <div>
+      <div className="space-y-2 gap-2.5">
         <label
           htmlFor="email"
-          className="block text-sm font-medium text-gray-700"
+          className="block text-sm font-medium text-foreground"
         >
           Adresse email
         </label>
@@ -61,15 +63,13 @@ export function LoginForm() {
             name="email"
             type="email"
             autoComplete="email"
+            placeholder="Entrer votre adresse email"
             disabled={isPending}
-            className={`block w-full appearance-none rounded-md border px-3 py-2 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm ${
-              errors.email ? "border-red-300" : "border-gray-300"
+            className={`block w-full appearance-none rounded-md border px-3 py-2 placeholder-foreground shadow-sm focus:border-primary focus:outline-none focus:ring-primary sm:text-sm ${
+              errors.email ? "border-red-300" : "border-border"
             }`}
           />
         </div>
-        {errors.email && (
-          <p className="mt-2 text-sm text-red-600">{errors.email}</p>
-        )}
       </div>
 
       <div>
@@ -85,22 +85,20 @@ export function LoginForm() {
             name="password"
             type="password"
             autoComplete="current-password"
+            placeholder="Entrer votre mot de passe"
             disabled={isPending}
-            className={`block w-full appearance-none rounded-md border px-3 py-2 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm ${
-              errors.password ? "border-red-300" : "border-gray-300"
+            className={`block w-full appearance-none rounded-md border px-3 py-2 placeholder-foreground shadow-sm focus:border-primary focus:outline-none focus:ring-primary sm:text-sm ${
+              errors.password ? "border-red-300" : "border-border"
             }`}
           />
         </div>
-        {errors.password && (
-          <p className="mt-2 text-sm text-red-600">{errors.password}</p>
-        )}
       </div>
 
       <div>
         <button
           type="submit"
           disabled={isPending}
-          className="flex w-full justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex w-full justify-center rounded-md border border-transparent bg-primary py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isPending ? "Connexion..." : "Se connecter"}
         </button>

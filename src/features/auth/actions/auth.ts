@@ -1,6 +1,6 @@
 "use server";
 
-import { loginSchema } from "@/app/lib/validations/auth";
+import { loginSchema } from "@/features/auth/validations/auth";
 import { prisma } from "@/app/lib/db";
 import bcrypt from "bcryptjs";
 import { createSession } from "@/app/lib/session";
@@ -50,7 +50,7 @@ export async function loginAction(
     }
 
     // 2. Vérifier le mot de passe
-    const passwordMatch = await bcrypt.compare(value.password, user.password);
+    const passwordMatch = await bcrypt.compare(value.password, user.passwordHash);
 
     if (!passwordMatch) {
       return { error: "Email ou mot de passe incorrect." };
