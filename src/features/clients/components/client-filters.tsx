@@ -26,6 +26,8 @@ export function ClientFilters() {
       } else {
         params.delete(name);
       }
+      // Toujours réinitialiser la page à 1 quand on change un filtre
+      params.delete("page");
       return params.toString();
     },
     [searchParams]

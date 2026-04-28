@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { ClientList } from "@/features/clients/components/client-list";
 import { ClientFilters } from "@/features/clients/components/client-filters";
+import { ClientPagination } from "@/features/clients/components/client-pagination";
 import { prisma } from "@/app/lib/db";
 import { verifySession } from "@/app/lib/session";
 import { decryptSensitiveData } from "@/app/lib/encryption";
@@ -18,6 +19,9 @@ export default async function ClientsPage({ searchParams }: ClientsPageProps) {
   const query = typeof resolvedParams?.q === 'string' ? resolvedParams.q.toLowerCase() : '';
   const typeFilter = typeof resolvedParams?.type === 'string' ? resolvedParams.type : 'TOUS';
   const statusFilter = typeof resolvedParams?.statut === 'string' ? resolvedParams.statut : 'TOUS';
+  let currentPage = Number(resolvedParams?.page) || 1;
+  if (currentPage < 1) currentPage = 1;
+  const ITEMS_PER_PAGE = 10;
   
   const rawClients = await prisma.client.findMany({
     where: {
@@ -47,6 +51,16 @@ export default async function ClientsPage({ searchParams }: ClientsPageProps) {
     });
   }
 
+  // Pagination en mémoire
+  const totalItems = clients.length;
+  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+  if (currentPage > totalPages && totalPages > 0) {
+    currentPage = totalPages;
+  }
+  
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const paginatedClients = clients.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
   return (
     <div className="container max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-border pb-6">
@@ -75,7 +89,17 @@ export default async function ClientsPage({ searchParams }: ClientsPageProps) {
           </Suspense>
         </div>
         <div className="p-1 sm:p-6">
-          <ClientList clients={clients} />
+          <ClientList clients={paginatedClients} />
+          {totalPages > 1 && (
+            <Suspense fallback={<div className="h-10 bg-muted rounded-md animate-pulse mt-4"></div>}>
+              <ClientPagination 
+                currentPage={currentPage} 
+                totalPages={totalPages} 
+                totalItems={totalItems} 
+                itemsPerPage={ITEMS_PER_PAGE} 
+              />
+            </Suspense>
+          )}
         </div>
       </div>
     </div>
