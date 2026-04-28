@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/app/lib/db";  
 import { verifySession } from "@/app/lib/session";
 import { clientSchema } from "../validations/client-validation";
-import { encryptSensitiveData } from "@/app/lib/encryption";
+import { encryptSensitiveData, decryptSensitiveData } from "@/app/lib/encryption";
 
 export type ActionState = {
   error?: string;
@@ -60,5 +60,33 @@ export async function createClient(_prevState: ActionState, formData: FormData):
   } catch (error) {
     console.error("[CREATE_CLIENT_ERROR]", error);
     return { error: "Une erreur est survenue lors de la création du client." };
+  }
+}
+
+export async function getClientById(clientId: string) {
+  try {
+    const sessionData = await verifySession();
+    if (!sessionData || !sessionData.user) {
+      return { error: "Non autorisé" };
+    }
+
+    const rawClient = await prisma.client.findUnique({
+      where: {
+        id: clientId,
+        userId: sessionData.user.id
+      }
+    });
+
+    if (!rawClient) {
+      return { error: "Client introuvable" };
+    }
+
+    // Déchiffrement des données pour l'affichage
+    const client = decryptSensitiveData(rawClient);
+    
+    return { data: client };
+  } catch (error) {
+    console.error("[GET_CLIENT_ERROR]", error);
+    return { error: "Une erreur est survenue lors de la récupération du client" };
   }
 }
