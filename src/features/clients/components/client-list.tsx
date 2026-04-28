@@ -51,7 +51,7 @@ export function ClientList({ clients }: ClientListProps) {
                 : client.raisonSociale || client.nom;
 
               return (
-                <tr key={client.id} className="bg-background hover:bg-primary-light/25 transition-colors">
+                <tr key={client.id} className="bg-background transition-colors">
                   <td className="px-6 py-4 text-primary font-medium">
                     {displayName}
                   </td>
