@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { TypeClient } from "@/generated/prisma/enums";
+import { DeleteClientButton } from "@/features/clients/components/delete-client-button";
 
 // On utilise un type partiel basé sur ce qu'on attend de Prisma
 type Client = {
@@ -81,6 +82,7 @@ export function ClientList({ clients }: ClientListProps) {
                     >
                       ✏️ Modifier
                     </Link>
+                    <DeleteClientButton clientId={client.id} clientNom={displayName} />
                   </td>
                 </tr>
               );

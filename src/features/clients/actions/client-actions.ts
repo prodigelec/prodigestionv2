@@ -154,3 +154,37 @@ export async function updateClient(clientId: string, _prevState: ActionState, fo
     return { error: "Une erreur est survenue lors de la modification du client." };
   }
 }
+
+export async function deleteClient(clientId: string): Promise<ActionState> {
+  try {
+    const sessionData = await verifySession();
+    if (!sessionData || !sessionData.user) {
+      return { error: "Vous devez être connecté pour effectuer cette action." };
+    }
+    const user = sessionData.user;
+
+    // Vérifier que le client appartient bien à l'utilisateur
+    const existingClient = await prisma.client.findUnique({
+      where: {
+        id: clientId,
+        userId: user.id
+      }
+    });
+
+    if (!existingClient) {
+      return { error: "Client introuvable ou non autorisé." };
+    }
+
+    // Suppression dans la base de données
+    await prisma.client.delete({
+      where: { id: clientId }
+    });
+
+    revalidatePath("/clients");
+    return { success: true };
+    
+  } catch (error) {
+    console.error("[DELETE_CLIENT_ERROR]", error);
+    return { error: "Une erreur est survenue lors de la suppression du client." };
+  }
+}

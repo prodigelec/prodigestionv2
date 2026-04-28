@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { TypeClient } from "@/generated/prisma/enums";
+import { DeleteClientButton } from "@/features/clients/components/delete-client-button";
 
 const TYPE_LABELS: Record<string, string> = {
   PARTICULIER:        "Particulier",
@@ -73,10 +74,12 @@ export function ClientDetails({ client }: ClientDetailsProps) {
           >
             ✏️ Modifier
           </Link>
-          {/* Composant ClientActions manquant - Espace réservé */}
-          <div className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border border-border bg-surface text-muted-foreground cursor-not-allowed">
-            ⚙️ Actions...
-          </div>
+          <DeleteClientButton 
+            clientId={client.id} 
+            clientNom={nom} 
+            redirectAfterDelete={true} 
+            className="flex-1 sm:flex-none px-4 py-2 rounded-lg text-sm font-medium text-center transition hover:bg-red-600 hover:text-white border border-red-200 text-red-600 bg-red-50 flex items-center justify-center gap-2"
+          />
         </div>
       </div>
 
