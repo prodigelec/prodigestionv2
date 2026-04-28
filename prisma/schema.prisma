@@ -58,12 +58,13 @@ model Client {
   // Informations Générales (Particulier: Nom de famille / Entreprise: Raison sociale)
   nom    String
   prenom String? // Seulement pour particulier
+  raisonSociale String? // Seulement pour entreprise
 
   // Coordonnées principales (Particulier ou Entreprise)
   email             String? // Email du particulier ou email de l'entreprise
   telephone         String? // Téléphone fixe du particulier ou de l'entreprise
   telephonePortable String? // Téléphone portable du particulier ou de l'entreprise
-  siteWeb           String?
+  siteWeb           String? // Site web de l'entreprise
 
   // Adresse
   adresse           String?
