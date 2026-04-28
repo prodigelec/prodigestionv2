@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { TypeClient } from "@/generated/prisma/enums";
+import { TypeClient } from "@/generated/prisma";
 import { DeleteClientButton } from "@/features/clients/components/delete-client-button";
 
 const TYPE_LABELS: Record<string, string> = {

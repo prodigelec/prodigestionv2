@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { TypeClient, StatutClient } from "@/generated/prisma/enums";
+import { TypeClient, StatutClient } from "@/generated/prisma";
 
 export const clientSchema = Joi.object({
   type: Joi.string()

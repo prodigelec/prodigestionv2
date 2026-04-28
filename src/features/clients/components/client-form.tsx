@@ -4,7 +4,7 @@ import { useActionState, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { createClient, updateClient, type ActionState } from "@/features/clients/actions/client-actions";
-import { TypeClient, StatutClient } from "@/generated/prisma/enums";
+import { TypeClient, StatutClient } from "@/generated/prisma";
 import { CustomSelect } from "@/components/ui/custom-select";
 
 interface ClientFormProps {

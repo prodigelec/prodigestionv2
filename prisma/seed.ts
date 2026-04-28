@@ -3,7 +3,7 @@ dotenv.config({ path: '.env.local' });
 dotenv.config({ path: '.env' });
 
 import bcrypt from 'bcryptjs';
-import { TypeClient, StatutClient } from '../src/generated/prisma/enums';
+import { TypeClient, StatutClient } from '../src/generated/prisma';
 import { encryptSensitiveData } from '../src/app/lib/encryption';
 
 async function main() {

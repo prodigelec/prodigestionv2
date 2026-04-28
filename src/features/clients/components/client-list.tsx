@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { TypeClient } from "@/generated/prisma/enums";
+import { TypeClient } from "@/generated/prisma";
 import { DeleteClientButton } from "@/features/clients/components/delete-client-button";
 
 // On utilise un type partiel basé sur ce qu'on attend de Prisma
