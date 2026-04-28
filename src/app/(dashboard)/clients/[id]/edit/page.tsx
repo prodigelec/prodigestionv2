@@ -15,28 +15,17 @@ export default async function EditClientPage({ params }: { params: Promise<{ id:
   const client = result.data;
 
   return (
-    <div className="flex-1 space-y-4 p-8 pt-6">
-      <div className="flex items-center justify-between space-y-2 mb-6">
+    <div className="container max-w-6xl mx-auto p-6 space-y-6">
+      <div className="flex items-center justify-between space-y-2">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <Link href="/clients" className="text-sm hover:underline text-muted-foreground">
-              Clients
-            </Link>
-            <span className="text-muted-foreground">/</span>
-            <Link href={`/clients/${client.id}`} className="text-sm hover:underline text-muted-foreground">
-              {client.nom}
-            </Link>
-            <span className="text-muted-foreground">/</span>
-            <span className="text-sm text-foreground">Modifier</span>
-          </div>
-          <h2 className="text-3xl font-bold tracking-tight">Modifier le client</h2>
-          <p className="text-muted-foreground">
+          <h1 className="text-2xl font-bold tracking-tight">Modifier le client</h1>
+          <p className="text-muted">
             Mettez à jour les informations du client ci-dessous.
           </p>
         </div>
       </div>
 
-      <div className="bg-surface border border-border rounded-xl p-6">
+      <div className="bg-surface border border-border rounded-xl p-8 shadow-sm">
         <ClientForm initialData={client} />
       </div>
     </div>
