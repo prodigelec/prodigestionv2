@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { TypeClient } from "@/generated/prisma/enums";
 
 // On utilise un type partiel basé sur ce qu'on attend de Prisma
@@ -68,9 +69,12 @@ export function ClientList({ clients }: ClientListProps) {
                     {client.telephone || client.telephonePortable || "-"}
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <button className="text-sm font-medium text-primary hover:underline">
+                    <Link 
+                      href={`/clients/${client.id}`}
+                      className="text-sm font-medium text-primary hover:underline"
+                    >
                       Voir
-                    </button>
+                    </Link>
                   </td>
                 </tr>
               );
