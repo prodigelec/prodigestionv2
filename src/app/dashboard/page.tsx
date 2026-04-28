@@ -19,7 +19,7 @@ export default async function DashboardPage() {
   const { user } = sessionData;
 
   return (
-    <div className="min-h-screen bg-background p-8">
+    <div className="p-8">
       <div className="max-w-7xl mx-auto">
         <header className="mb-8 flex justify-between items-center">
           <div>
