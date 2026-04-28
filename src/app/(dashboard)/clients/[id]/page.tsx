@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/app/lib/db";
 import { verifySession } from "@/app/lib/session";
 import { decryptSensitiveData } from "@/app/lib/encryption";
-import { TypeClient, StatutClient } from "@/generated/prisma/enums";
+import { TypeClient } from "@/generated/prisma/enums";
 
 // Note: BadgePill, ClientActions, et HistoriqueEmails ne sont pas encore recréés dans le nouveau projet.
 // Ils ont été masqués temporairement ou remplacés par des espaces vides pour que la page compile.
