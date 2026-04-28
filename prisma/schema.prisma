@@ -8,13 +8,14 @@ datasource db {
 }
 
 model User {
-  id           String    @id @default(cuid())
-  email        String    @unique
+  id           String   @id @default(cuid())
+  email        String   @unique
   passwordHash String
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-  sessions     Session[]
+  sessions Session[]
+  clients  Client[]
 
   @@map("users")
 }
@@ -26,9 +27,73 @@ model Session {
   expiresAt DateTime
   createdAt DateTime @default(now())
 
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([expiresAt])
   @@map("sessions")
+}
+
+enum TypeClient {
+  PARTICULIER
+  ENTREPRISE
+  SYNDIC
+  AGENCE_IMMOBILIERE
+  AUTRE
+}
+
+enum StatutClient {
+  PROSPECT
+  CLIENT
+  INACTIF
+  ARCHIVE
+}
+
+model Client {
+  id        String       @id @default(cuid())
+  type      TypeClient   @default(PARTICULIER)
+  typeAutre String? // Rempli si type == AUTRE (ex: "Bailleur", "Promoteur")
+  statut    StatutClient @default(PROSPECT)
+
+  // Informations Générales (Particulier: Nom de famille / Entreprise: Raison sociale)
+  nom    String
+  prenom String? // Seulement pour particulier
+
+  // Coordonnées principales (Particulier ou Entreprise)
+  email             String? // Email du particulier ou email de l'entreprise
+  telephone         String? // Téléphone fixe du particulier ou de l'entreprise
+  telephonePortable String? // Téléphone portable du particulier ou de l'entreprise
+  siteWeb           String?
+
+  // Adresse
+  adresse           String?
+  adresseComplement String? // Bâtiment, étage, digicode, etc.
+  ville             String?
+  codePostal        String?
+  pays              String? @default("France")
+
+  // Informations Spécifiques Entreprise/Pro
+  siret     String?
+  numeroTVA String?
+
+  // Informations Spécifiques Syndic / Agence
+  nomImmeubleOuCopropriete String? // Nom de la résidence, de l'immeuble ou du bien géré
+  contactSurPlace          String? // Nom du gardien, locataire sur place, etc.
+  telSurPlace              String? // Téléphone sur place (loge gardien, locataire)
+
+  // Interlocuteur (Contact principal au bureau : gestionnaire, agent, etc.)
+  interlocuteurNomComplet String? // Nom et Prénom de l'interlocuteur
+  interlocuteurPoste      String?
+  interlocuteurPortable   String?
+  interlocuteurEmail      String?
+
+  notes     String?  @db.Text
+  userId    String // Permet de relier le client à l'utilisateur qui l'a créé
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("clients")
 }
