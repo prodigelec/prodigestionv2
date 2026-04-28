@@ -12,6 +12,26 @@ const navigation = [
       },
     ],
   },
+  {
+    category: "Clients",
+    items: [
+      { 
+        name: "Liste des clients", 
+        href: "/clients", 
+        icon: "👥"
+      },
+      {
+        name: "Devis",
+        href: "/devis",
+        icon: "📝"
+      },
+      {
+        name: "Factures",
+        href: "/factures",
+        icon: "📃"
+      }
+    ],
+  }
 ];
 
 export function Sidebar() {
@@ -36,7 +56,7 @@ export function Sidebar() {
                     href={item.href}
                     className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-foreground hover:bg-border/50 transition-colors group"
                   >
-                    <span className="text-xl leading-none group-hover:scale-110 transition-transform">
+                    <span className="text-sm leading-none group-hover:scale-110 transition-transform">
                       {item.icon}
                     </span>
                     <span className="font-medium text-sm">{item.name}</span>
