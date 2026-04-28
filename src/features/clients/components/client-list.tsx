@@ -31,7 +31,7 @@ export function ClientList({ clients }: ClientListProps) {
   }
 
   return (
-    <div className="w-full">
+    <div className="container mx-auto px-4 py-10">
       <div className="border border-border rounded-lg overflow-hidden">
         <table className="w-full text-sm text-left">
           <thead className="text-xs text-primary uppercase">
