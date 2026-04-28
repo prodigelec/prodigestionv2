@@ -65,9 +65,14 @@ export default async function ClientsPage({ searchParams }: ClientsPageProps) {
     <div className="container max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-border pb-6">
         <div className="space-y-1.5">
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">
-            Clients
-          </h1>
+          <div className="flex items-center gap-3">
+            <h1 className="text-3xl font-bold tracking-tight text-foreground">
+              Clients
+            </h1>
+            <span className="inline-flex items-center justify-center rounded-full bg-primary/10 px-2.5 py-0.5 text-sm font-medium text-primary">
+              {totalItems} client{totalItems > 1 ? 's' : ''}
+            </span>
+          </div>
           <p className="text-sm text-muted-foreground">
             Gérez votre base de clients, vos prospects et leur historique.
           </p>
