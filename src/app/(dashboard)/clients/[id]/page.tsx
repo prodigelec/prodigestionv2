@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/app/lib/db";
-import { Mail, User, Phone, MapPin, Building2, BadgeCheck } from "lucide-react";
 import { verifySession } from "@/app/lib/session";
 import { decryptSensitiveData } from "@/app/lib/encryption";
 import { TypeClient, StatutClient } from "@/generated/prisma/enums";
@@ -112,45 +111,39 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ i
         {/* Infos principales */}
         <div className="lg:col-span-2 flex flex-col gap-6">
           <div className="rounded-xl border p-5 bg-surface border-border">
-            <h2 className="text-sm font-semibold mb-4 text-foreground">Informations</h2>
+            <h2 className="text-sm font-semibold mb-4 text-foreground flex items-center gap-2">ℹ️ Informations</h2>
             <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 text-sm">
-              {[
-                [<Mail key="mail" size={16} className="text-primary" />, "Email", client.email],
-                [<Phone key="tel" size={16} className="text-primary" />, "Téléphone", client.telephone],
-                [<Phone key="port" size={16} className="text-primary" />, "Portable", client.telephonePortable],
-                [<MapPin key="adr" size={16} className="text-primary" />, "Adresse", client.adresse],
-                [<MapPin key="cp" size={16} className="text-primary" />, "Code postal", client.codePostal],
-                [<MapPin key="ville" size={16} className="text-primary" />, "Ville", client.ville],
-                [<Building2 key="siret" size={16} className="text-primary" />, "SIRET", client.siret],
-                [<BadgeCheck key="tva" size={16} className="text-primary" />, "N° TVA", client.numeroTVA],
-              ].map(([icon, label, value]) => value ? (
-                <div key={label as string}>
-                  <dt className="text-muted-foreground flex items-center gap-2">
-                    {icon}
-                    <span>{label as string}</span>
-                  </dt>
-                  <dd className="font-medium mt-0.5 text-foreground">{value as string}</dd>
-                </div>
-              ) : null)}
-            </dl>
+                {[
+                  ["Email", client.email],
+                  ["Téléphone", client.telephone],
+                  ["Portable", client.telephonePortable],
+                  ["Adresse", client.adresse],
+                  ["Code postal", client.codePostal],
+                  ["Ville", client.ville],
+                  ["SIRET", client.siret],
+                  ["N° TVA", client.numeroTVA],
+                ].map(([label, value]) => value ? (
+                  <div key={label as string}>
+                    <dt className="text-muted-foreground">{label as string}</dt>
+                    <dd className="font-medium mt-0.5 text-foreground">{value as string}</dd>
+                  </div>
+                ) : null)}
+              </dl>
           </div>
 
           {/* Interlocuteur */}
           {showPro && (client.interlocuteurNomComplet || client.interlocuteurPortable || client.interlocuteurEmail) && (
             <div className="rounded-xl border p-5 bg-surface border-border">
-              <h2 className="text-sm font-semibold mb-4 text-foreground">Interlocuteur principal</h2>
+              <h2 className="text-sm font-semibold mb-4 text-foreground flex items-center gap-2">👤 Interlocuteur principal</h2>
               <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 text-sm">
                 {[
-                  [<User key="nom" size={16} className="text-primary" />, "Nom", client.interlocuteurNomComplet],
-                  [<BadgeCheck key="poste" size={16} className="text-primary" />, "Poste", client.interlocuteurPoste],
-                  [<Phone key="port" size={16} className="text-primary" />, "Portable", client.interlocuteurPortable],
-                  [<Mail key="mail" size={16} className="text-primary" />, "Email", client.interlocuteurEmail],
-                ].map(([icon, label, value]) => value ? (
+                  ["Nom", client.interlocuteurNomComplet],
+                  ["Poste", client.interlocuteurPoste],
+                  ["Portable", client.interlocuteurPortable],
+                  ["Email", client.interlocuteurEmail],
+                ].map(([label, value]) => value ? (
                   <div key={label as string}>
-                    <dt className="text-muted-foreground flex items-center gap-2">
-                      {icon}
-                      <span>{label as string}</span>
-                    </dt>
+                    <dt className="text-muted-foreground">{label as string}</dt>
                     <dd className="font-medium mt-0.5 text-foreground">{value as string}</dd>
                   </div>
                 ) : null)}
@@ -161,22 +154,21 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ i
           {/* Notes */}
           {client.notes && (
             <div className="rounded-xl border p-5 bg-surface border-border">
-              <h2 className="text-sm font-semibold mb-2 text-foreground">Notes</h2>
+              <h2 className="text-sm font-semibold mb-2 text-foreground flex items-center gap-2">📝 Notes</h2>
               <p className="text-sm whitespace-pre-wrap text-muted-foreground">{client.notes}</p>
             </div>
           )}
 
           {/* Devis récents - Espace réservé (Relations non existantes) */}
           <div className="rounded-xl border p-5 bg-surface border-border opacity-50">
-            <h2 className="text-sm font-semibold mb-3 text-foreground">Devis récents</h2>
+            <h2 className="text-sm font-semibold mb-3 text-foreground flex items-center gap-2">📄 Devis récents</h2>
             <p className="text-sm text-muted-foreground">Module Devis non installé</p>
           </div>
 
           {/* Historique Emails - Espace réservé */}
           <div className="rounded-xl border p-5 bg-surface border-border opacity-50">
             <h2 className="text-sm font-semibold mb-4 flex items-center gap-2 text-foreground">
-              <Mail size={16} className="text-primary" />
-              Historique des échanges
+              📧 Historique des échanges
             </h2>
             <p className="text-sm text-muted-foreground">Module Emails non installé</p>
           </div>
@@ -185,12 +177,12 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ i
         {/* Badges + stats */}
         <div className="flex flex-col gap-4">
           <div className="rounded-xl border p-5 bg-surface border-border opacity-50">
-            <h2 className="text-sm font-semibold mb-3 text-foreground">Badges</h2>
+            <h2 className="text-sm font-semibold mb-3 text-foreground flex items-center gap-2">🏅 Badges</h2>
             <p className="text-sm text-muted-foreground">Aucun badge (Module non installé)</p>
           </div>
 
           <div className="rounded-xl border p-5 bg-surface border-border opacity-50">
-            <h2 className="text-sm font-semibold mb-3 text-foreground">Activité</h2>
+            <h2 className="text-sm font-semibold mb-3 text-foreground flex items-center gap-2">📊 Activité</h2>
             <dl className="flex flex-col gap-3 text-sm">
               <div className="flex justify-between">
                 <dt className="text-muted-foreground">Devis</dt>
