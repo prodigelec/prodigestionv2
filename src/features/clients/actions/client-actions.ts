@@ -1,10 +1,10 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { prisma } from "@/app/lib/db";  
 import { verifySession } from "@/app/lib/session";
 import { clientSchema } from "../validations/client-validation";
+import { encryptSensitiveData } from "@/app/lib/encryption";
 
 export type ActionState = {
   error?: string;
@@ -12,7 +12,7 @@ export type ActionState = {
   success?: boolean;
 };
 
-export async function createClient(prevState: ActionState, formData: FormData): Promise<ActionState> {
+export async function createClient(_prevState: ActionState, formData: FormData): Promise<ActionState> {
   try {
     const sessionData = await verifySession();
     if (!sessionData || !sessionData.user) {
@@ -21,17 +21,9 @@ export async function createClient(prevState: ActionState, formData: FormData): 
     const user = sessionData.user;
 
     const rawData = Object.fromEntries(formData.entries());
-    
-    // Nettoyer les données (supprimer les chaînes vides pour Prisma)
-    const cleanedData = Object.fromEntries(
-      Object.entries(rawData).map(([key, value]) => [
-        key, 
-        value === "" ? null : value
-      ])
-    );
 
     // Validation Joi
-    const { error, value } = clientSchema.validate(cleanedData, { abortEarly: false });
+    const { error, value } = clientSchema.validate(rawData, { abortEarly: false });
 
     if (error) {
       const fieldErrors: Record<string, string[]> = {};
@@ -43,10 +35,21 @@ export async function createClient(prevState: ActionState, formData: FormData): 
       return { fieldErrors };
     }
 
+    // Nettoyer les données (supprimer les chaînes vides pour Prisma)
+    const cleanedData = Object.fromEntries(
+      Object.entries(value).map(([key, val]) => [
+        key, 
+        val === "" ? null : val
+      ])
+    );
+
+    // Chiffrement des données sensibles
+    const encryptedData = encryptSensitiveData(cleanedData);
+
     // Création dans la base de données
-    const newClient = await prisma.client.create({
+    await prisma.client.create({
       data: {
-        ...value,
+        ...(encryptedData as any),
         userId: user.id,
       },
     });
