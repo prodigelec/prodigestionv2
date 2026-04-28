@@ -3,7 +3,7 @@
 import { loginSchema } from "@/features/auth/validations/auth";
 import { prisma } from "@/app/lib/db";
 import bcrypt from "bcryptjs";
-import { createSession } from "@/app/lib/session";
+import { createSession, deleteSession } from "@/app/lib/session";
 import { redirect } from "next/navigation";
 
 export type ActionState = {
@@ -65,4 +65,14 @@ export async function loginAction(
 
   // Redirection après succès
   redirect("/dashboard");
+}
+
+export async function logoutAction() {
+  try {
+    await deleteSession();
+  } catch (error) {
+    console.error("Erreur lors de la déconnexion:", error);
+  }
+  
+  redirect("/login");
 }
