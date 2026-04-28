@@ -63,6 +63,51 @@ export async function createClient(_prevState: ActionState, formData: FormData):
   }
 }
 
+export async function getClientStats() {
+  try {
+    const sessionData = await verifySession();
+    if (!sessionData || !sessionData.user) {
+      return { error: "Non autorisé" };
+    }
+
+    const userId = sessionData.user.id;
+
+    const totalClients = await prisma.client.count({
+      where: { userId }
+    });
+
+    const statusCounts = await prisma.client.groupBy({
+      by: ['statut'],
+      where: { userId },
+      _count: {
+        _all: true
+      }
+    });
+
+    const rawRecentClients = await prisma.client.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+      take: 5
+    });
+
+    const recentClients = rawRecentClients.map(client => decryptSensitiveData(client));
+
+    return { 
+      data: {
+        total: totalClients,
+        statusCounts: statusCounts.reduce((acc, curr) => {
+          acc[curr.statut] = curr._count._all;
+          return acc;
+        }, {} as Record<string, number>),
+        recentClients
+      }
+    };
+  } catch (error) {
+    console.error("[GET_CLIENT_STATS_ERROR]", error);
+    return { error: "Impossible de récupérer les statistiques clients" };
+  }
+}
+
 export async function getClientById(clientId: string) {
   try {
     const sessionData = await verifySession();
