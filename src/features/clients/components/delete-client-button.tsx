@@ -11,9 +11,10 @@ interface DeleteClientButtonProps {
   redirectAfterDelete?: boolean;
   className?: string;
   iconOnly?: boolean;
+  title?: string;
 }
 
-export function DeleteClientButton({ clientId, clientNom, redirectAfterDelete = false, className, iconOnly = false }: DeleteClientButtonProps) {
+export function DeleteClientButton({ clientId, clientNom, redirectAfterDelete = false, className, iconOnly = false, title }: DeleteClientButtonProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [showConfirm, setShowConfirm] = useState(false);
@@ -64,8 +65,9 @@ export function DeleteClientButton({ clientId, clientNom, redirectAfterDelete = 
     <button
       onClick={() => setShowConfirm(true)}
       className={className || defaultClassName}
+      title={title}
     >
-      🗑️ {!iconOnly && "Supprimer"}
+      {iconOnly ? "🗑️" : "🗑️ Supprimer"}
     </button>
   );
 }

@@ -69,20 +69,28 @@ export function ClientList({ clients }: ClientListProps) {
                   <td className="px-6 py-4 text-muted">
                     {client.telephone || client.telephonePortable || "-"}
                   </td>
-                  <td className="px-6 py-4 text-right flex items-center justify-end gap-4">
+                  <td className="px-6 py-4 text-right flex items-center justify-end gap-3">
                     <Link 
                       href={`/clients/${client.id}`}
-                      className="text-sm font-medium text-primary hover:underline flex items-center gap-1"
+                      className="text-lg hover:scale-125 transition-transform"
+                      title="Voir"
                     >
-                      👁️ Voir
+                      👁️
                     </Link>
                     <Link 
                       href={`/clients/${client.id}/edit`}
-                      className="text-sm font-medium text-primary hover:underline flex items-center gap-1"
+                      className="text-lg hover:scale-125 transition-transform"
+                      title="Modifier"
                     >
-                      ✏️ Modifier
+                      ✏️
                     </Link>
-                    <DeleteClientButton clientId={client.id} clientNom={displayName} />
+                    <DeleteClientButton 
+                      clientId={client.id} 
+                      clientNom={displayName} 
+                      iconOnly={true}
+                      title="Supprimer"
+                      className="text-lg hover:scale-125 transition-transform cursor-pointer"
+                    />
                   </td>
                 </tr>
               );
