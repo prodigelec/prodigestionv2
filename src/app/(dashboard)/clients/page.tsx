@@ -2,11 +2,12 @@ import Link from "next/link";
 import { ClientList } from "@/features/clients/components/client-list";
 import { prisma } from "@/app/lib/db";
 import { verifySession } from "@/app/lib/session";
+import { decryptSensitiveData } from "@/app/lib/encryption";
 
 export default async function ClientsPage() {
   const session = await verifySession();
   
-  const clients = await prisma.client.findMany({
+  const rawClients = await prisma.client.findMany({
     where: {
       userId: session?.user?.id
     },
@@ -14,6 +15,9 @@ export default async function ClientsPage() {
       createdAt: 'desc'
     }
   });
+
+  // Déchiffrer les données sensibles pour l'affichage
+  const clients = rawClients.map(client => decryptSensitiveData(client));
 
   return (
     <div className="container p-6 space-y-6">
