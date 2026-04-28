@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { TypeClient } from "@/generated/prisma";
+import { TypeClient, StatutClient } from "@/generated/prisma";
 import { DeleteClientButton } from "@/features/clients/components/delete-client-button";
 
 // On utilise un type partiel basé sur ce qu'on attend de Prisma
@@ -56,10 +56,24 @@ export function ClientList({ clients }: ClientListProps) {
                     {displayName}
                   </td>
                   <td className="px-6 py-4 text-muted">
-                    {client.type.replace(/_/g, " ")}
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                      client.type === TypeClient.PARTICULIER ? 'bg-purple-500/10 text-purple-500' :
+                      client.type === TypeClient.ENTREPRISE ? 'bg-blue-500/10 text-blue-500' :
+                      client.type === TypeClient.SYNDIC ? 'bg-teal-500/10 text-teal-500' :
+                      client.type === TypeClient.AGENCE_IMMOBILIERE ? 'bg-rose-500/10 text-rose-500' :
+                      'bg-muted text-muted-foreground'
+                    }`}>
+                      {client.type.replace(/_/g, " ")}
+                    </span>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                      client.statut === StatutClient.CLIENT ? 'bg-emerald-500/10 text-emerald-500' :
+                      client.statut === StatutClient.PROSPECT ? 'bg-amber-500/10 text-amber-500' :
+                      client.statut === StatutClient.INACTIF ? 'bg-red-500/10 text-red-500' :
+                      client.statut === StatutClient.ARCHIVE ? 'bg-gray-500/10 text-gray-500' :
+                      'bg-muted text-muted-foreground'
+                    }`}>
                       {client.statut}
                     </span>
                   </td>

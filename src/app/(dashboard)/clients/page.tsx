@@ -6,7 +6,7 @@ import { ClientPagination } from "@/features/clients/components/client-paginatio
 import { prisma } from "@/app/lib/db";
 import { verifySession } from "@/app/lib/session";
 import { decryptSensitiveData } from "@/app/lib/encryption";
-import { TypeClient, StatutClient } from "@/generated/prisma";
+import { StatutClient, TypeClient } from "@/generated/prisma";
 
 interface ClientsPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
