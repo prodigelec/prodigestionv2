@@ -1,8 +1,6 @@
 import Link from "next/link";
-import { LayoutDashboard } from "lucide-react";
 
-// On utilise Lucide React pour des icônes professionnelles
-// Et on ajoute une couleur Tailwind (ex: text-blue-500) pour garder le côté coloré des emojis
+// Utilisation des emojis natifs comme demandé
 const navigation = [
   {
     category: "Général",
@@ -10,8 +8,7 @@ const navigation = [
       { 
         name: "Tableau de bord", 
         href: "/dashboard", 
-        icon: LayoutDashboard,
-        color: "text-blue-500" // Couleur vive pour imiter le côté emoji
+        icon: "📊"
       },
     ],
   },
@@ -33,20 +30,19 @@ export function Sidebar() {
               {group.category}
             </h2>
             <ul className="space-y-1">
-              {group.items.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <li key={item.name}>
-                    <Link 
-                      href={item.href}
-                      className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-foreground hover:bg-border/50 transition-colors group"
-                    >
-                      <Icon className={`w-5 h-5 ${item.color} group-hover:scale-110 transition-transform`} />
-                      <span className="font-medium text-sm">{item.name}</span>
-                    </Link>
-                  </li>
-                );
-              })}
+              {group.items.map((item) => (
+                <li key={item.name}>
+                  <Link 
+                    href={item.href}
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-foreground hover:bg-border/50 transition-colors group"
+                  >
+                    <span className="text-xl leading-none group-hover:scale-110 transition-transform">
+                      {item.icon}
+                    </span>
+                    <span className="font-medium text-sm">{item.name}</span>
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
         ))}
