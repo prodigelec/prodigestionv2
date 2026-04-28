@@ -68,12 +68,18 @@ export function ClientList({ clients }: ClientListProps) {
                   <td className="px-6 py-4 text-muted">
                     {client.telephone || client.telephonePortable || "-"}
                   </td>
-                  <td className="px-6 py-4 text-right">
+                  <td className="px-6 py-4 text-right flex items-center justify-end gap-4">
                     <Link 
                       href={`/clients/${client.id}`}
-                      className="text-sm font-medium text-primary hover:underline"
+                      className="text-sm font-medium text-primary hover:underline flex items-center gap-1"
                     >
-                      Voir
+                      👁️ Voir
+                    </Link>
+                    <Link 
+                      href={`/clients/${client.id}/edit`}
+                      className="text-sm font-medium text-primary hover:underline flex items-center gap-1"
+                    >
+                      ✏️ Modifier
                     </Link>
                   </td>
                 </tr>

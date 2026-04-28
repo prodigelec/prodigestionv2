@@ -69,13 +69,13 @@ export function ClientDetails({ client }: ClientDetailsProps) {
         <div className="flex gap-2 w-full sm:w-auto">
           <Link
             href={`/clients/${client.id}/edit`}
-            className="flex-1 sm:flex-none px-4 py-2 rounded-lg text-sm font-medium border text-center transition hover:opacity-80 bg-surface border-border text-foreground"
+            className="flex-1 sm:flex-none px-4 py-2 rounded-lg text-sm font-medium border text-center transition hover:opacity-80 bg-surface border-border text-foreground flex items-center justify-center gap-2"
           >
-            Modifier
+            ✏️ Modifier
           </Link>
           {/* Composant ClientActions manquant - Espace réservé */}
-          <div className="flex items-center px-4 py-2 rounded-lg text-sm font-medium border border-border bg-surface text-muted-foreground cursor-not-allowed">
-            Actions...
+          <div className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border border-border bg-surface text-muted-foreground cursor-not-allowed">
+            ⚙️ Actions...
           </div>
         </div>
       </div>
