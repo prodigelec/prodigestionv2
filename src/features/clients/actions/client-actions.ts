@@ -84,6 +84,13 @@ export async function getClientStats() {
       }
     });
 
+    // Récupérer le nombre de clients par type (Entreprise, Particulier, etc.)
+    const typeCounts = await prisma.client.groupBy({
+      by: ['type'],
+      where: { userId },
+      _count: { _all: true }
+    });
+
     const rawRecentClients = await prisma.client.findMany({
       where: { userId },
       orderBy: { createdAt: 'desc' },
@@ -97,6 +104,10 @@ export async function getClientStats() {
         total: totalClients,
         statusCounts: statusCounts.reduce((acc, curr) => {
           acc[curr.statut] = curr._count._all;
+          return acc;
+        }, {} as Record<string, number>),
+        typeCounts: typeCounts.reduce((acc, curr) => {
+          acc[curr.type] = curr._count._all;
           return acc;
         }, {} as Record<string, number>),
         recentClients

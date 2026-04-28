@@ -1,7 +1,7 @@
-import { Users, UserPlus, TrendingUp, Activity } from "lucide-react";
+import { Users, UserPlus, TrendingUp, Activity, Building2, User } from "lucide-react";
 import Link from "next/link";
 import { getClientStats } from "@/features/clients/actions/client-actions";
-import { StatutClient } from "@/generated/prisma";
+import { StatutClient, TypeClient } from "@/generated/prisma";
 
 export async function DashboardClientStats() {
   const statsResult = await getClientStats();
@@ -14,13 +14,16 @@ export async function DashboardClientStats() {
     );
   }
 
-  const { total, statusCounts, recentClients } = statsResult.data;
+  const { total, statusCounts, typeCounts, recentClients } = statsResult.data;
   const prospectsCount = statusCounts[StatutClient.PROSPECT] || 0;
   const clientsCount = statusCounts[StatutClient.CLIENT] || 0;
+  
+  const entreprisesCount = typeCounts[TypeClient.ENTREPRISE] || 0;
+  const particuliersCount = typeCounts[TypeClient.PARTICULIER] || 0;
 
   return (
     <div className="space-y-6">
-      {/* KPI Cards */}
+      {/* KPI Cards - Ligne 1 : Statuts */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-surface p-6 rounded-xl border border-border shadow-sm flex items-center space-x-4 transition-all hover:shadow-md">
           <div className="p-3 bg-primary/10 text-primary rounded-full">
@@ -64,6 +67,29 @@ export async function DashboardClientStats() {
           </div>
           <span className="text-muted-foreground group-hover:text-primary transition-colors">→</span>
         </Link>
+      </div>
+
+      {/* KPI Cards - Ligne 2 : Types */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="bg-surface p-6 rounded-xl border border-border shadow-sm flex items-center space-x-4 transition-all hover:shadow-md">
+          <div className="p-3 bg-blue-500/10 text-blue-500 rounded-full">
+            <Building2 className="w-6 h-6" />
+          </div>
+          <div>
+            <p className="text-sm font-medium text-muted-foreground">Entreprises</p>
+            <h3 className="text-2xl font-bold text-foreground">{entreprisesCount}</h3>
+          </div>
+        </div>
+
+        <div className="bg-surface p-6 rounded-xl border border-border shadow-sm flex items-center space-x-4 transition-all hover:shadow-md">
+          <div className="p-3 bg-purple-500/10 text-purple-500 rounded-full">
+            <User className="w-6 h-6" />
+          </div>
+          <div>
+            <p className="text-sm font-medium text-muted-foreground">Particuliers</p>
+            <h3 className="text-2xl font-bold text-foreground">{particuliersCount}</h3>
+          </div>
+        </div>
       </div>
 
       {/* Derniers Ajouts */}
