@@ -115,18 +115,21 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ i
             <h2 className="text-sm font-semibold mb-4 text-foreground">Informations</h2>
             <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 text-sm">
               {[
-                ["Email",       client.email],
-                ["Téléphone",   client.telephone],
-                ["Portable",    client.telephonePortable],
-                ["Adresse",     client.adresse],
-                ["Code postal", client.codePostal],
-                ["Ville",       client.ville],
-                ["SIRET",       client.siret],
-                ["N° TVA",      client.numeroTVA],
-              ].map(([label, value]) => value ? (
-                <div key={label}>
-                  <dt className="text-muted-foreground">{label}</dt>
-                  <dd className="font-medium mt-0.5 text-foreground">{value}</dd>
+                [<Mail key="mail" size={16} className="text-primary" />, "Email", client.email],
+                [<Phone key="tel" size={16} className="text-primary" />, "Téléphone", client.telephone],
+                [<Phone key="port" size={16} className="text-primary" />, "Portable", client.telephonePortable],
+                [<MapPin key="adr" size={16} className="text-primary" />, "Adresse", client.adresse],
+                [<MapPin key="cp" size={16} className="text-primary" />, "Code postal", client.codePostal],
+                [<MapPin key="ville" size={16} className="text-primary" />, "Ville", client.ville],
+                [<Building2 key="siret" size={16} className="text-primary" />, "SIRET", client.siret],
+                [<BadgeCheck key="tva" size={16} className="text-primary" />, "N° TVA", client.numeroTVA],
+              ].map(([icon, label, value]) => value ? (
+                <div key={label as string}>
+                  <dt className="text-muted-foreground flex items-center gap-2">
+                    {icon}
+                    <span>{label as string}</span>
+                  </dt>
+                  <dd className="font-medium mt-0.5 text-foreground">{value as string}</dd>
                 </div>
               ) : null)}
             </dl>
@@ -138,14 +141,17 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ i
               <h2 className="text-sm font-semibold mb-4 text-foreground">Interlocuteur principal</h2>
               <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 text-sm">
                 {[
-                  ["Nom",      client.interlocuteurNomComplet],
-                  ["Poste",    client.interlocuteurPoste],
-                  ["Portable", client.interlocuteurPortable],
-                  ["Email",    client.interlocuteurEmail],
-                ].map(([label, value]) => value ? (
-                  <div key={label}>
-                    <dt className="text-muted-foreground">{label}</dt>
-                    <dd className="font-medium mt-0.5 text-foreground">{value}</dd>
+                  [<User key="nom" size={16} className="text-primary" />, "Nom", client.interlocuteurNomComplet],
+                  [<BadgeCheck key="poste" size={16} className="text-primary" />, "Poste", client.interlocuteurPoste],
+                  [<Phone key="port" size={16} className="text-primary" />, "Portable", client.interlocuteurPortable],
+                  [<Mail key="mail" size={16} className="text-primary" />, "Email", client.interlocuteurEmail],
+                ].map(([icon, label, value]) => value ? (
+                  <div key={label as string}>
+                    <dt className="text-muted-foreground flex items-center gap-2">
+                      {icon}
+                      <span>{label as string}</span>
+                    </dt>
+                    <dd className="font-medium mt-0.5 text-foreground">{value as string}</dd>
                   </div>
                 ) : null)}
               </dl>
