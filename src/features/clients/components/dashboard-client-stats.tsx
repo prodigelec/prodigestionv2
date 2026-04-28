@@ -1,4 +1,4 @@
-import { Users, UserPlus, TrendingUp, Activity, Building2, User } from "lucide-react";
+import { Users, UserPlus, TrendingUp, Activity, Building2, User, Building, Home } from "lucide-react";
 import Link from "next/link";
 import { getClientStats } from "@/features/clients/actions/client-actions";
 import { StatutClient, TypeClient } from "@/generated/prisma";
@@ -20,6 +20,8 @@ export async function DashboardClientStats() {
   
   const entreprisesCount = typeCounts[TypeClient.ENTREPRISE] || 0;
   const particuliersCount = typeCounts[TypeClient.PARTICULIER] || 0;
+  const syndicsCount = typeCounts[TypeClient.SYNDIC] || 0;
+  const agencesCount = typeCounts[TypeClient.AGENCE_IMMOBILIERE] || 0;
 
   return (
     <div className="space-y-6">
@@ -70,7 +72,7 @@ export async function DashboardClientStats() {
       </div>
 
       {/* KPI Cards - Ligne 2 : Types */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-surface p-6 rounded-xl border border-border shadow-sm flex items-center space-x-4 transition-all hover:shadow-md">
           <div className="p-3 bg-blue-500/10 text-blue-500 rounded-full">
             <Building2 className="w-6 h-6" />
@@ -88,6 +90,26 @@ export async function DashboardClientStats() {
           <div>
             <p className="text-sm font-medium text-muted-foreground">Particuliers</p>
             <h3 className="text-2xl font-bold text-foreground">{particuliersCount}</h3>
+          </div>
+        </div>
+
+        <div className="bg-surface p-6 rounded-xl border border-border shadow-sm flex items-center space-x-4 transition-all hover:shadow-md">
+          <div className="p-3 bg-teal-500/10 text-teal-500 rounded-full">
+            <Building className="w-6 h-6" />
+          </div>
+          <div>
+            <p className="text-sm font-medium text-muted-foreground">Syndics</p>
+            <h3 className="text-2xl font-bold text-foreground">{syndicsCount}</h3>
+          </div>
+        </div>
+
+        <div className="bg-surface p-6 rounded-xl border border-border shadow-sm flex items-center space-x-4 transition-all hover:shadow-md">
+          <div className="p-3 bg-rose-500/10 text-rose-500 rounded-full">
+            <Home className="w-6 h-6" />
+          </div>
+          <div>
+            <p className="text-sm font-medium text-muted-foreground">Agences Immo.</p>
+            <h3 className="text-2xl font-bold text-foreground">{agencesCount}</h3>
           </div>
         </div>
       </div>
