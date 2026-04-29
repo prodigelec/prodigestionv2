@@ -34,6 +34,13 @@ export default async function ClientsPage({ searchParams }: ClientsPageProps) {
     }
   });
 
+  // Récupérer le nombre total de clients indépendamment des filtres (type, statut, recherche)
+  const absoluteTotalClients = await prisma.client.count({
+    where: {
+      userId: session?.user?.id,
+    }
+  });
+
   // Déchiffrer les données sensibles pour l'affichage
   let allClients = rawClients.map(client => decryptSensitiveData(client));
 
@@ -105,7 +112,7 @@ export default async function ClientsPage({ searchParams }: ClientsPageProps) {
               Clients
             </h1>
             <span className="inline-flex items-center justify-center rounded-full bg-primary/10 px-2.5 py-0.5 text-sm font-medium text-primary border border-primary/20">
-              {totalItems} Total
+              {absoluteTotalClients} Total
             </span>
             
             {/* Badges de comptage par type */}
