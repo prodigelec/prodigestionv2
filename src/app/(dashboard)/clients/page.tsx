@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Suspense } from "react";
+import { User, Building, Landmark, Home } from "lucide-react";
 import { ClientList } from "@/features/clients/components/client-list";
 import { ClientFilters } from "@/features/clients/components/client-filters";
 import { ClientPagination } from "@/features/clients/components/client-pagination";
@@ -54,6 +55,19 @@ export default async function ClientsPage({ searchParams }: ClientsPageProps) {
   // Pagination en mémoire
   const totalItems = clients.length;
   
+  // Fonction pour construire l'URL de filtrage rapide par type
+  const buildTypeLink = (type: string) => {
+    const params = new URLSearchParams();
+    if (query) params.set('q', query);
+    if (statusFilter !== 'TOUS') params.set('statut', statusFilter);
+    // Si on clique sur le type déjà actif, on l'enlève (toggle)
+    if (typeFilter !== type) {
+      params.set('type', type);
+    }
+    const queryString = params.toString();
+    return queryString ? `/clients?${queryString}` : '/clients';
+  };
+
   // Calculer le nombre par type (sur la liste complète avant pagination)
   const typeCounts = {
     [TypeClient.PARTICULIER]: 0,
@@ -91,24 +105,60 @@ export default async function ClientsPage({ searchParams }: ClientsPageProps) {
             
             {/* Badges de comptage par type */}
             {typeCounts[TypeClient.PARTICULIER] > 0 && (
-              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-500/10 text-purple-500 border border-purple-500/20">
+              <Link 
+                href={buildTypeLink(TypeClient.PARTICULIER)}
+                className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium transition-colors border ${
+                  typeFilter === TypeClient.PARTICULIER 
+                    ? 'bg-purple-500 text-white border-purple-600 shadow-sm' 
+                    : 'bg-purple-500/10 text-purple-600 border-purple-500/20 hover:bg-purple-500/20'
+                }`}
+                title="Filtrer par Particuliers"
+              >
+                <User className="w-3.5 h-3.5" />
                 {typeCounts[TypeClient.PARTICULIER]} Particulier{typeCounts[TypeClient.PARTICULIER] > 1 ? 's' : ''}
-              </span>
+              </Link>
             )}
             {typeCounts[TypeClient.ENTREPRISE] > 0 && (
-              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-500/10 text-blue-500 border border-blue-500/20">
+              <Link 
+                href={buildTypeLink(TypeClient.ENTREPRISE)}
+                className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium transition-colors border ${
+                  typeFilter === TypeClient.ENTREPRISE 
+                    ? 'bg-blue-500 text-white border-blue-600 shadow-sm' 
+                    : 'bg-blue-500/10 text-blue-600 border-blue-500/20 hover:bg-blue-500/20'
+                }`}
+                title="Filtrer par Entreprises"
+              >
+                <Building className="w-3.5 h-3.5" />
                 {typeCounts[TypeClient.ENTREPRISE]} Entreprise{typeCounts[TypeClient.ENTREPRISE] > 1 ? 's' : ''}
-              </span>
+              </Link>
             )}
             {typeCounts[TypeClient.SYNDIC] > 0 && (
-              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-teal-500/10 text-teal-500 border border-teal-500/20">
+              <Link 
+                href={buildTypeLink(TypeClient.SYNDIC)}
+                className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium transition-colors border ${
+                  typeFilter === TypeClient.SYNDIC 
+                    ? 'bg-teal-500 text-white border-teal-600 shadow-sm' 
+                    : 'bg-teal-500/10 text-teal-600 border-teal-500/20 hover:bg-teal-500/20'
+                }`}
+                title="Filtrer par Syndics"
+              >
+                <Landmark className="w-3.5 h-3.5" />
                 {typeCounts[TypeClient.SYNDIC]} Syndic{typeCounts[TypeClient.SYNDIC] > 1 ? 's' : ''}
-              </span>
+              </Link>
             )}
             {typeCounts[TypeClient.AGENCE_IMMOBILIERE] > 0 && (
-              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-rose-500/10 text-rose-500 border border-rose-500/20">
+              <Link 
+                href={buildTypeLink(TypeClient.AGENCE_IMMOBILIERE)}
+                className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium transition-colors border ${
+                  typeFilter === TypeClient.AGENCE_IMMOBILIERE 
+                    ? 'bg-rose-500 text-white border-rose-600 shadow-sm' 
+                    : 'bg-rose-500/10 text-rose-600 border-rose-500/20 hover:bg-rose-500/20'
+                }`}
+                title="Filtrer par Agences"
+              >
+                <Home className="w-3.5 h-3.5" />
                 {typeCounts[TypeClient.AGENCE_IMMOBILIERE]} Agence{typeCounts[TypeClient.AGENCE_IMMOBILIERE] > 1 ? 's' : ''}
-              </span>
+              </Link>
             )}
           </div>
           <p className="text-sm text-muted-foreground">
