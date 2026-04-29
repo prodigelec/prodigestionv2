@@ -2,6 +2,7 @@
 
 import { prisma } from "@/app/lib/db";
 import { verifySession } from "@/app/lib/session";
+import { StatutDevis } from "@/generated/prisma";
 
 export async function getDevisList() {
   try {
@@ -29,7 +30,28 @@ export async function getDevisList() {
       }
     });
 
-    return { data: devisList };
+    const totalCount = await prisma.devis.count({
+      where: { userId: sessionData.user.id }
+    });
+
+    const statusCounts = await prisma.devis.groupBy({
+      by: ['statut'],
+      where: { userId: sessionData.user.id },
+      _count: { _all: true }
+    });
+
+    const counts = {
+      brouillon: statusCounts.find(s => s.statut === StatutDevis.BROUILLON)?._count._all || 0,
+      envoye: statusCounts.find(s => s.statut === StatutDevis.ENVOYE)?._count._all || 0,
+      accepte: statusCounts.find(s => s.statut === StatutDevis.ACCEPTE)?._count._all || 0,
+      refuse: statusCounts.find(s => s.statut === StatutDevis.REFUSE)?._count._all || 0,
+    };
+
+    return { 
+      data: devisList,
+      totalCount,
+      counts
+    };
   } catch (error) {
     console.error("[GET_DEVIS_LIST_ERROR]", error);
     return { error: "Impossible de récupérer les devis" };
