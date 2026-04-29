@@ -50,7 +50,8 @@ export function AddressSearchAutocomplete({
   // Rechercher les adresses via l'API du gouvernement
   useEffect(() => {
     const fetchAddresses = async () => {
-      if (!debouncedQuery || debouncedQuery.length < 3) {
+      // L'API Adresse Gouv exige un minimum de 3 caractères et doit commencer par une lettre/chiffre
+      if (!debouncedQuery || debouncedQuery.length < 3 || !/^[a-zA-Z0-9]/.test(debouncedQuery)) {
         setResults([]);
         return;
       }
@@ -58,10 +59,20 @@ export function AddressSearchAutocomplete({
       setIsLoading(true);
       try {
         const res = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(debouncedQuery)}&limit=5`);
+        
+        // Si l'API retourne une erreur 400 (ex: requête mal formatée), on l'ignore silencieusement
+        if (res.status === 400) {
+          setResults([]);
+          return;
+        }
+        
         if (!res.ok) throw new Error("Erreur réseau");
+        
         const data = await res.json();
         setResults(data.features || []);
-        setIsOpen(true);
+        if (data.features && data.features.length > 0) {
+          setIsOpen(true);
+        }
       } catch (error) {
         console.error("Erreur recherche adresse:", error);
       } finally {
