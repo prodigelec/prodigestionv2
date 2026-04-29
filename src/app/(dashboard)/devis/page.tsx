@@ -27,75 +27,50 @@ export default async function DevisPage() {
   const totalCount = result.totalCount || 0;
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-8">
-      {/* En-tête principal - Aligné sur le design de Clients */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface p-6 rounded-2xl border border-border shadow-sm">
-        <div className="flex items-center gap-4">
-          <div className="p-3 bg-primary/10 text-primary rounded-xl">
-            <FileText className="w-8 h-8" />
-          </div>
-          <div>
-            <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-bold text-foreground">Devis</h1>
-              <span className="inline-flex items-center justify-center rounded-full bg-primary/10 px-2.5 py-0.5 text-sm font-medium text-primary border border-primary/20">
-                {totalCount} total
-              </span>
+    <div className="container max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-border pb-6">
+        <div className="space-y-1.5">
+          <div className="flex flex-wrap items-center gap-3">
+            <h1 className="text-3xl font-bold tracking-tight text-foreground">
+              Devis
+            </h1>
+            <span className="inline-flex items-center justify-center rounded-full bg-primary/10 px-2.5 py-0.5 text-sm font-medium text-primary border border-primary/20">
+              {totalCount} Total
+            </span>
+            
+            {/* Badges de comptage par statut */}
+            <div className="flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium transition-colors border bg-muted/50 text-muted-foreground border-border">
+              <Clock className="w-3.5 h-3.5" />
+              {counts.brouillon} Brouillon{counts.brouillon !== 1 ? 's' : ''}
             </div>
-            <p className="text-muted-foreground mt-1">
-              Gérez vos propositions commerciales
-            </p>
+
+            <div className="flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium transition-colors border bg-blue-500/10 text-blue-600 border-blue-500/20">
+              <Send className="w-3.5 h-3.5" />
+              {counts.envoye} Envoyé{counts.envoye !== 1 ? 's' : ''}
+            </div>
+
+            <div className="flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium transition-colors border bg-emerald-500/10 text-emerald-600 border-emerald-500/20">
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              {counts.accepte} Accepté{counts.accepte !== 1 ? 's' : ''}
+            </div>
+
+            <div className="flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium transition-colors border bg-rose-500/10 text-rose-600 border-rose-500/20">
+              <XCircle className="w-3.5 h-3.5" />
+              {counts.refuse} Refusé{counts.refuse !== 1 ? 's' : ''}
+            </div>
           </div>
+          <p className="text-sm text-muted-foreground">
+            Gérez vos propositions commerciales et suivez leur statut.
+          </p>
         </div>
-
-        <Link
-          href="/devis/nouveau"
-          className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground shadow-lg hover:bg-primary/90 transition-all hover:scale-105 active:scale-95"
-        >
-          <PlusCircle className="h-4 w-4" />
-          Nouveau devis
-        </Link>
-      </div>
-
-      {/* Badges de statuts (KPIs) - Style inspiré de la liste des clients */}
-      <div className="flex flex-wrap gap-2 items-center mb-6">
-        <div className="flex items-center gap-2 px-3 py-1.5 bg-muted rounded-full border border-border">
-          <Clock className="w-4 h-4 text-muted-foreground" />
-          <span className="text-sm font-medium text-muted-foreground">Brouillon</span>
-          <span className="bg-background text-foreground text-xs px-2 py-0.5 rounded-full font-bold shadow-sm">
-            {counts.brouillon}
-          </span>
+        <div className="flex items-center gap-3">
+          <Link 
+            href="/devis/nouveau" 
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-light shadow-sm hover:bg-primary/90 h-10 px-5 py-2"
+          >
+            Nouveau Devis
+          </Link>
         </div>
-
-        <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-500/10 rounded-full border border-blue-500/20">
-          <Send className="w-4 h-4 text-blue-500" />
-          <span className="text-sm font-medium text-blue-600 dark:text-blue-400">Envoyé</span>
-          <span className="bg-blue-500 text-white text-xs px-2 py-0.5 rounded-full font-bold shadow-sm">
-            {counts.envoye}
-          </span>
-        </div>
-
-        <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 rounded-full border border-emerald-500/20">
-          <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-          <span className="text-sm font-medium text-emerald-600 dark:text-emerald-400">Accepté</span>
-          <span className="bg-emerald-500 text-white text-xs px-2 py-0.5 rounded-full font-bold shadow-sm">
-            {counts.accepte}
-          </span>
-        </div>
-
-        <div className="flex items-center gap-2 px-3 py-1.5 bg-rose-500/10 rounded-full border border-rose-500/20">
-          <XCircle className="w-4 h-4 text-rose-500" />
-          <span className="text-sm font-medium text-rose-600 dark:text-rose-400">Refusé</span>
-          <span className="bg-rose-500 text-white text-xs px-2 py-0.5 rounded-full font-bold shadow-sm">
-            {counts.refuse}
-          </span>
-        </div>
-      </div>
-
-      {/* Barre de recherche et filtres (Espace réservé) */}
-      <div className="bg-surface p-4 rounded-xl border border-border shadow-sm mb-4">
-        <p className="text-sm text-muted-foreground italic flex items-center justify-center">
-          Barre de recherche et filtres à venir...
-        </p>
       </div>
 
       {/* Liste des devis */}

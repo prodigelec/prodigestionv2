@@ -71,58 +71,63 @@ export function DevisList({ devis }: DevisListProps) {
   };
 
   return (
-    <div className="bg-surface rounded-xl border border-border shadow-sm overflow-hidden">
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm text-left">
-          <thead className="bg-muted/50 text-muted-foreground uppercase text-xs">
-            <tr>
-              <th className="px-6 py-4 font-medium">Numéro</th>
-              <th className="px-6 py-4 font-medium">Date</th>
-              <th className="px-6 py-4 font-medium">Client</th>
-              <th className="px-6 py-4 font-medium text-right">Montant TTC</th>
-              <th className="px-6 py-4 font-medium">Statut</th>
-              <th className="px-6 py-4 font-medium text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-border">
-            {devis.map((d) => (
-              <tr key={d.id} className="hover:bg-muted/10 transition-colors group">
-                <td className="px-6 py-4 font-medium text-foreground">
-                  {d.numero}
-                </td>
-                <td className="px-6 py-4 text-muted-foreground">
-                  {new Date(d.dateCreation).toLocaleDateString('fr-FR')}
-                </td>
-                <td className="px-6 py-4">
-                  <div className="font-medium text-foreground">{formatClientName(d.client)}</div>
-                  <div className="text-xs text-muted-foreground">{d.client.type.replace(/_/g, " ")}</div>
-                </td>
-                <td className="px-6 py-4 text-right font-semibold text-foreground">
-                  {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(d.totalTTC)}
-                </td>
-                <td className="px-6 py-4">
-                  {getStatutBadge(d.statut)}
-                </td>
-                <td className="px-6 py-4 text-right space-x-2">
-                  <Link 
-                    href={`/devis/${d.id}`}
-                    className="inline-flex items-center justify-center p-2 text-blue-500 hover:bg-blue-500/10 hover:scale-110 rounded-md transition-all"
-                    title="Voir le devis"
-                  >
-                    <Eye className="w-4 h-4" />
-                  </Link>
-                  <Link 
-                    href={`/devis/${d.id}/edit`}
-                    className="inline-flex items-center justify-center p-2 text-amber-500 hover:bg-amber-500/10 hover:scale-110 rounded-md transition-all"
-                    title="Modifier le devis"
-                  >
-                    <Edit2 className="w-4 h-4" />
-                  </Link>
-                </td>
+    <div className="bg-surface border border-border rounded-xl shadow-sm overflow-hidden">
+      <div className="p-4 sm:p-6 border-b border-border bg-muted/20">
+        <p className="text-sm text-muted-foreground italic">Filtres et barre de recherche à venir...</p>
+      </div>
+      <div className="p-1 sm:p-6">
+        <div className="overflow-x-auto rounded-lg border border-border">
+          <table className="w-full text-sm text-left">
+            <thead className="bg-muted/50 text-muted-foreground uppercase text-xs">
+              <tr>
+                <th className="px-6 py-4 font-medium">Numéro</th>
+                <th className="px-6 py-4 font-medium">Date</th>
+                <th className="px-6 py-4 font-medium">Client</th>
+                <th className="px-6 py-4 font-medium text-right">Montant TTC</th>
+                <th className="px-6 py-4 font-medium">Statut</th>
+                <th className="px-6 py-4 font-medium text-right">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-border bg-background">
+              {devis.map((d) => (
+                <tr key={d.id} className="hover:bg-muted/30 transition-colors group">
+                  <td className="px-6 py-4 font-medium text-foreground">
+                    {d.numero}
+                  </td>
+                  <td className="px-6 py-4 text-muted-foreground">
+                    {new Date(d.dateCreation).toLocaleDateString('fr-FR')}
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="font-medium text-foreground">{formatClientName(d.client)}</div>
+                    <div className="text-xs text-muted-foreground">{d.client.type.replace(/_/g, " ")}</div>
+                  </td>
+                  <td className="px-6 py-4 text-right font-semibold text-foreground">
+                    {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(d.totalTTC)}
+                  </td>
+                  <td className="px-6 py-4">
+                    {getStatutBadge(d.statut)}
+                  </td>
+                  <td className="px-6 py-4 text-right space-x-2">
+                    <Link 
+                      href={`/devis/${d.id}`}
+                      className="inline-flex items-center justify-center p-2 text-blue-500 hover:bg-blue-500/10 hover:scale-110 rounded-md transition-all"
+                      title="Voir le devis"
+                    >
+                      <Eye className="w-4 h-4" />
+                    </Link>
+                    <Link 
+                      href={`/devis/${d.id}/edit`}
+                      className="inline-flex items-center justify-center p-2 text-amber-500 hover:bg-amber-500/10 hover:scale-110 rounded-md transition-all"
+                      title="Modifier le devis"
+                    >
+                      <Edit2 className="w-4 h-4" />
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
