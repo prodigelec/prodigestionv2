@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { createClient, updateClient, type ActionState } from "@/features/clients/actions/client-actions";
 import { TypeClient, StatutClient } from "@/generated/prisma";
 import { CustomSelect } from "@/components/ui/custom-select";
-import { CompanySearchButton, type CompanyData } from "@/features/clients/components/company-search-button";
+import { CompanySearchButton, type CompanyData } from "@/components/ui/company-search-button";
 
 interface ClientFormProps {
   initialData?: any;
