@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { TypeClient } from "@/generated/prisma";
+import { Edit2, Info, FileText, User, FileSignature, Mail, Award, Activity } from "lucide-react";
 import { DeleteClientButton } from "@/features/clients/components/delete-client-button";
 
 const TYPE_LABELS: Record<string, string> = {
@@ -72,7 +73,7 @@ export function ClientDetails({ client }: ClientDetailsProps) {
             href={`/clients/${client.id}/edit`}
             className="flex-1 sm:flex-none px-4 py-2 rounded-lg text-sm font-medium border text-center transition hover:opacity-80 bg-surface border-border text-foreground flex items-center justify-center gap-2"
           >
-            ✏️ Modifier
+            <Edit2 className="w-4 h-4" /> Modifier
           </Link>
           <DeleteClientButton 
             clientId={client.id} 
@@ -86,8 +87,10 @@ export function ClientDetails({ client }: ClientDetailsProps) {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Infos principales */}
         <div className="lg:col-span-2 flex flex-col gap-6">
-          <div className="rounded-xl border p-5 bg-surface border-border">
-            <h2 className="text-sm font-semibold mb-4 text-foreground flex items-center gap-2">ℹ️ Informations</h2>
+          <div className="rounded-xl border p-5 bg-surface border-border shadow-sm">
+            <h2 className="text-sm font-semibold mb-4 text-foreground flex items-center gap-2">
+              <Info className="w-4 h-4 text-primary" /> Informations
+            </h2>
             <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 text-sm">
                 {[
                   ["Email", client.email],
@@ -109,8 +112,10 @@ export function ClientDetails({ client }: ClientDetailsProps) {
 
           {/* Interlocuteur */}
           {showPro && (client.interlocuteurNomComplet || client.interlocuteurPortable || client.interlocuteurEmail) && (
-            <div className="rounded-xl border p-5 bg-surface border-border">
-              <h2 className="text-sm font-semibold mb-4 text-foreground flex items-center gap-2">👤 Interlocuteur principal</h2>
+            <div className="rounded-xl border p-5 bg-surface border-border shadow-sm">
+              <h2 className="text-sm font-semibold mb-4 text-foreground flex items-center gap-2">
+                <User className="w-4 h-4 text-primary" /> Interlocuteur principal
+              </h2>
               <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 text-sm">
                 {[
                   ["Nom", client.interlocuteurNomComplet],
@@ -129,22 +134,26 @@ export function ClientDetails({ client }: ClientDetailsProps) {
 
           {/* Notes */}
           {client.notes && (
-            <div className="rounded-xl border p-5 bg-surface border-border">
-              <h2 className="text-sm font-semibold mb-2 text-foreground flex items-center gap-2">📝 Notes</h2>
+            <div className="rounded-xl border p-5 bg-surface border-border shadow-sm">
+              <h2 className="text-sm font-semibold mb-2 text-foreground flex items-center gap-2">
+                <FileText className="w-4 h-4 text-primary" /> Notes
+              </h2>
               <p className="text-sm whitespace-pre-wrap text-muted-foreground">{client.notes}</p>
             </div>
           )}
 
           {/* Devis récents - Espace réservé (Relations non existantes) */}
-          <div className="rounded-xl border p-5 bg-surface border-border opacity-50">
-            <h2 className="text-sm font-semibold mb-3 text-foreground flex items-center gap-2">📄 Devis récents</h2>
+          <div className="rounded-xl border p-5 bg-surface border-border opacity-50 shadow-sm">
+            <h2 className="text-sm font-semibold mb-3 text-foreground flex items-center gap-2">
+              <FileSignature className="w-4 h-4 text-primary" /> Devis récents
+            </h2>
             <p className="text-sm text-muted-foreground">Module Devis non installé</p>
           </div>
 
           {/* Historique Emails - Espace réservé */}
-          <div className="rounded-xl border p-5 bg-surface border-border opacity-50">
+          <div className="rounded-xl border p-5 bg-surface border-border opacity-50 shadow-sm">
             <h2 className="text-sm font-semibold mb-4 flex items-center gap-2 text-foreground">
-              📧 Historique des échanges
+              <Mail className="w-4 h-4 text-primary" /> Historique des échanges
             </h2>
             <p className="text-sm text-muted-foreground">Module Emails non installé</p>
           </div>
@@ -152,13 +161,17 @@ export function ClientDetails({ client }: ClientDetailsProps) {
 
         {/* Badges + stats */}
         <div className="flex flex-col gap-4">
-          <div className="rounded-xl border p-5 bg-surface border-border opacity-50">
-            <h2 className="text-sm font-semibold mb-3 text-foreground flex items-center gap-2">🏅 Badges</h2>
+          <div className="rounded-xl border p-5 bg-surface border-border opacity-50 shadow-sm">
+            <h2 className="text-sm font-semibold mb-3 text-foreground flex items-center gap-2">
+              <Award className="w-4 h-4 text-primary" /> Badges
+            </h2>
             <p className="text-sm text-muted-foreground">Aucun badge (Module non installé)</p>
           </div>
 
-          <div className="rounded-xl border p-5 bg-surface border-border opacity-50">
-            <h2 className="text-sm font-semibold mb-3 text-foreground flex items-center gap-2">📊 Activité</h2>
+          <div className="rounded-xl border p-5 bg-surface border-border opacity-50 shadow-sm">
+            <h2 className="text-sm font-semibold mb-3 text-foreground flex items-center gap-2">
+              <Activity className="w-4 h-4 text-primary" /> Activité
+            </h2>
             <dl className="flex flex-col gap-3 text-sm">
               <div className="flex justify-between">
                 <dt className="text-muted-foreground">Devis</dt>

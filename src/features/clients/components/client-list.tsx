@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { TypeClient, StatutClient } from "@/generated/prisma";
+import { Eye, Edit2 } from "lucide-react";
 import { DeleteClientButton } from "@/features/clients/components/delete-client-button";
 
 // On utilise un type partiel basé sur ce qu'on attend de Prisma
@@ -86,24 +87,24 @@ export function ClientList({ clients }: ClientListProps) {
                   <td className="px-6 py-4 text-right flex items-center justify-end gap-3">
                     <Link 
                       href={`/clients/${client.id}`}
-                      className="text-lg hover:scale-125 transition-transform"
-                      title="Voir"
+                      className="text-blue-500 hover:text-blue-600 hover:scale-110 transition-all p-1.5 hover:bg-blue-500/10 rounded-md"
+                      title="Voir les détails"
                     >
-                      👁️
+                      <Eye className="w-5 h-5" />
                     </Link>
                     <Link 
                       href={`/clients/${client.id}/edit`}
-                      className="text-lg hover:scale-125 transition-transform"
-                      title="Modifier"
+                      className="text-amber-500 hover:text-amber-600 hover:scale-110 transition-all p-1.5 hover:bg-amber-500/10 rounded-md"
+                      title="Modifier le client"
                     >
-                      ✏️
+                      <Edit2 className="w-5 h-5" />
                     </Link>
                     <DeleteClientButton 
                       clientId={client.id} 
                       clientNom={displayName} 
                       iconOnly={true}
-                      title="Supprimer"
-                      className="text-lg hover:scale-125 transition-transform cursor-pointer"
+                      title="Supprimer le client"
+                      className="text-red-500 hover:text-red-600 hover:scale-110 transition-all p-1.5 hover:bg-red-500/10 rounded-md"
                     />
                   </td>
                 </tr>

@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { Trash2 } from "lucide-react";
 import { deleteClient } from "@/features/clients/actions/client-actions";
 import { Dialog, DialogPanel, DialogTitle, DialogBackdrop } from "@headlessui/react";
 
@@ -47,7 +48,7 @@ export function DeleteClientButton({ clientId, clientNom, redirectAfterDelete = 
         className={className || defaultClassName}
         title={title}
       >
-        {iconOnly ? "🗑️" : "🗑️ Supprimer"}
+        {iconOnly ? <Trash2 className="w-5 h-5" /> : <><Trash2 className="w-4 h-4 mr-1 inline" /> Supprimer</>}
       </button>
 
       <Dialog open={isOpen} as="div" className="relative z-50" onClose={() => {
