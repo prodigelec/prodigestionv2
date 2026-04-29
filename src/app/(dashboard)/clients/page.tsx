@@ -27,7 +27,6 @@ export default async function ClientsPage({ searchParams }: ClientsPageProps) {
   const rawClients = await prisma.client.findMany({
     where: {
       userId: session?.user?.id,
-      ...(typeFilter !== 'TOUS' && { type: typeFilter as TypeClient }),
       ...(statusFilter !== 'TOUS' && { statut: statusFilter as StatutClient }),
     },
     orderBy: {
@@ -36,11 +35,11 @@ export default async function ClientsPage({ searchParams }: ClientsPageProps) {
   });
 
   // Déchiffrer les données sensibles pour l'affichage
-  let clients = rawClients.map(client => decryptSensitiveData(client));
+  let allClients = rawClients.map(client => decryptSensitiveData(client));
 
   // Filtrage par texte en mémoire (car l'email et le téléphone sont chiffrés en BDD)
   if (query) {
-    clients = clients.filter(c => {
+    allClients = allClients.filter(c => {
       const nomMatch = c.nom && c.nom.toLowerCase().includes(query);
       const prenomMatch = c.prenom && c.prenom.toLowerCase().includes(query);
       const rsMatch = c.raisonSociale && c.raisonSociale.toLowerCase().includes(query);
@@ -52,9 +51,30 @@ export default async function ClientsPage({ searchParams }: ClientsPageProps) {
     });
   }
 
+  // Calculer le nombre par type (sur la liste complète avant le filtre de type)
+  const typeCounts = {
+    [TypeClient.PARTICULIER]: 0,
+    [TypeClient.ENTREPRISE]: 0,
+    [TypeClient.SYNDIC]: 0,
+    [TypeClient.AGENCE_IMMOBILIERE]: 0,
+    [TypeClient.AUTRE]: 0,
+  };
+  
+  allClients.forEach(client => {
+    if (typeCounts[client.type as TypeClient] !== undefined) {
+      typeCounts[client.type as TypeClient]++;
+    }
+  });
+
+  // Appliquer le filtre de type en mémoire pour la liste finale
+  let clients = allClients;
+  if (typeFilter !== 'TOUS') {
+    clients = clients.filter(c => c.type === typeFilter);
+  }
+
   // Pagination en mémoire
   const totalItems = clients.length;
-  
+
   // Fonction pour construire l'URL de filtrage rapide par type
   const buildTypeLink = (type: string) => {
     const params = new URLSearchParams();
@@ -67,21 +87,6 @@ export default async function ClientsPage({ searchParams }: ClientsPageProps) {
     const queryString = params.toString();
     return queryString ? `/clients?${queryString}` : '/clients';
   };
-
-  // Calculer le nombre par type (sur la liste complète avant pagination)
-  const typeCounts = {
-    [TypeClient.PARTICULIER]: 0,
-    [TypeClient.ENTREPRISE]: 0,
-    [TypeClient.SYNDIC]: 0,
-    [TypeClient.AGENCE_IMMOBILIERE]: 0,
-    [TypeClient.AUTRE]: 0,
-  };
-  
-  clients.forEach(client => {
-    if (typeCounts[client.type as TypeClient] !== undefined) {
-      typeCounts[client.type as TypeClient]++;
-    }
-  });
 
   const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
   if (currentPage > totalPages && totalPages > 0) {
@@ -104,62 +109,57 @@ export default async function ClientsPage({ searchParams }: ClientsPageProps) {
             </span>
             
             {/* Badges de comptage par type */}
-            {typeCounts[TypeClient.PARTICULIER] > 0 && (
-              <Link 
-                href={buildTypeLink(TypeClient.PARTICULIER)}
-                className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium transition-colors border ${
-                  typeFilter === TypeClient.PARTICULIER 
-                    ? 'bg-purple-500 text-white border-purple-600 shadow-sm' 
-                    : 'bg-purple-500/10 text-purple-600 border-purple-500/20 hover:bg-purple-500/20'
-                }`}
-                title="Filtrer par Particuliers"
-              >
-                <User className="w-3.5 h-3.5" />
-                {typeCounts[TypeClient.PARTICULIER]} Particulier{typeCounts[TypeClient.PARTICULIER] > 1 ? 's' : ''}
-              </Link>
-            )}
-            {typeCounts[TypeClient.ENTREPRISE] > 0 && (
-              <Link 
-                href={buildTypeLink(TypeClient.ENTREPRISE)}
-                className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium transition-colors border ${
-                  typeFilter === TypeClient.ENTREPRISE 
-                    ? 'bg-blue-500 text-white border-blue-600 shadow-sm' 
-                    : 'bg-blue-500/10 text-blue-600 border-blue-500/20 hover:bg-blue-500/20'
-                }`}
-                title="Filtrer par Entreprises"
-              >
-                <Building className="w-3.5 h-3.5" />
-                {typeCounts[TypeClient.ENTREPRISE]} Entreprise{typeCounts[TypeClient.ENTREPRISE] > 1 ? 's' : ''}
-              </Link>
-            )}
-            {typeCounts[TypeClient.SYNDIC] > 0 && (
-              <Link 
-                href={buildTypeLink(TypeClient.SYNDIC)}
-                className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium transition-colors border ${
-                  typeFilter === TypeClient.SYNDIC 
-                    ? 'bg-teal-500 text-white border-teal-600 shadow-sm' 
-                    : 'bg-teal-500/10 text-teal-600 border-teal-500/20 hover:bg-teal-500/20'
-                }`}
-                title="Filtrer par Syndics"
-              >
-                <Landmark className="w-3.5 h-3.5" />
-                {typeCounts[TypeClient.SYNDIC]} Syndic{typeCounts[TypeClient.SYNDIC] > 1 ? 's' : ''}
-              </Link>
-            )}
-            {typeCounts[TypeClient.AGENCE_IMMOBILIERE] > 0 && (
-              <Link 
-                href={buildTypeLink(TypeClient.AGENCE_IMMOBILIERE)}
-                className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium transition-colors border ${
-                  typeFilter === TypeClient.AGENCE_IMMOBILIERE 
-                    ? 'bg-rose-500 text-white border-rose-600 shadow-sm' 
-                    : 'bg-rose-500/10 text-rose-600 border-rose-500/20 hover:bg-rose-500/20'
-                }`}
-                title="Filtrer par Agences"
-              >
-                <Home className="w-3.5 h-3.5" />
-                {typeCounts[TypeClient.AGENCE_IMMOBILIERE]} Agence{typeCounts[TypeClient.AGENCE_IMMOBILIERE] > 1 ? 's' : ''}
-              </Link>
-            )}
+            <Link 
+              href={buildTypeLink(TypeClient.PARTICULIER)}
+              className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium transition-colors border ${
+                typeFilter === TypeClient.PARTICULIER 
+                  ? 'bg-purple-500 text-white border-purple-600 shadow-sm' 
+                  : 'bg-purple-500/10 text-purple-600 border-purple-500/20 hover:bg-purple-500/20'
+              }`}
+              title="Filtrer par Particuliers"
+            >
+              <User className="w-3.5 h-3.5" />
+              {typeCounts[TypeClient.PARTICULIER]} Particulier{typeCounts[TypeClient.PARTICULIER] !== 1 ? 's' : ''}
+            </Link>
+
+            <Link 
+              href={buildTypeLink(TypeClient.ENTREPRISE)}
+              className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium transition-colors border ${
+                typeFilter === TypeClient.ENTREPRISE 
+                  ? 'bg-blue-500 text-white border-blue-600 shadow-sm' 
+                  : 'bg-blue-500/10 text-blue-600 border-blue-500/20 hover:bg-blue-500/20'
+              }`}
+              title="Filtrer par Entreprises"
+            >
+              <Building className="w-3.5 h-3.5" />
+              {typeCounts[TypeClient.ENTREPRISE]} Entreprise{typeCounts[TypeClient.ENTREPRISE] !== 1 ? 's' : ''}
+            </Link>
+
+            <Link 
+              href={buildTypeLink(TypeClient.SYNDIC)}
+              className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium transition-colors border ${
+                typeFilter === TypeClient.SYNDIC 
+                  ? 'bg-teal-500 text-white border-teal-600 shadow-sm' 
+                  : 'bg-teal-500/10 text-teal-600 border-teal-500/20 hover:bg-teal-500/20'
+              }`}
+              title="Filtrer par Syndics"
+            >
+              <Landmark className="w-3.5 h-3.5" />
+              {typeCounts[TypeClient.SYNDIC]} Syndic{typeCounts[TypeClient.SYNDIC] !== 1 ? 's' : ''}
+            </Link>
+
+            <Link 
+              href={buildTypeLink(TypeClient.AGENCE_IMMOBILIERE)}
+              className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium transition-colors border ${
+                typeFilter === TypeClient.AGENCE_IMMOBILIERE 
+                  ? 'bg-rose-500 text-white border-rose-600 shadow-sm' 
+                  : 'bg-rose-500/10 text-rose-600 border-rose-500/20 hover:bg-rose-500/20'
+              }`}
+              title="Filtrer par Agences"
+            >
+              <Home className="w-3.5 h-3.5" />
+              {typeCounts[TypeClient.AGENCE_IMMOBILIERE]} Agence{typeCounts[TypeClient.AGENCE_IMMOBILIERE] !== 1 ? 's' : ''}
+            </Link>
           </div>
           <p className="text-sm text-muted-foreground">
             Gérez votre base de clients, vos prospects et leur historique.
