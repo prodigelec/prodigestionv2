@@ -7,6 +7,7 @@ import { createClient, updateClient, type ActionState } from "@/features/clients
 import { TypeClient, StatutClient } from "@/generated/prisma";
 import { CustomSelect } from "@/components/ui/custom-select";
 import { CompanySearchButton, type CompanyData } from "@/components/ui/company-search-button";
+import { AddressSearchAutocomplete, type AddressData } from "@/components/ui/address-search-autocomplete";
 
 interface ClientFormProps {
   initialData?: any;
@@ -61,6 +62,17 @@ export function ClientForm({ initialData }: ClientFormProps) {
       const cleStr = cle.toString().padStart(2, "0");
       setInputValue("numeroTVA", `FR${cleStr}${siren}`);
     }
+  };
+
+  const handleAddressSelect = (address: AddressData) => {
+    const setInputValue = (id: string, value: string) => {
+      const el = document.getElementById(id) as HTMLInputElement;
+      if (el) el.value = value;
+    };
+
+    setInputValue("adresse", address.adresse);
+    setInputValue("codePostal", address.codePostal);
+    setInputValue("ville", address.ville);
   };
 
   const isParticulier = selectedType === TypeClient.PARTICULIER;
@@ -187,7 +199,10 @@ export function ClientForm({ initialData }: ClientFormProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2 md:col-span-2">
             <label htmlFor="adresse" className="text-sm font-medium text-foreground">Adresse postale</label>
-            <input id="adresse" name="adresse" type="text" defaultValue={initialData?.adresse || ""} className="flex h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground hover:border-primary/50 transition-colors focus-visible:outline-none" placeholder="123 rue de la Paix" />
+            <AddressSearchAutocomplete 
+              defaultValue={initialData?.adresse || ""}
+              onSelect={handleAddressSelect}
+            />
           </div>
           <div className="space-y-2 md:col-span-2">
             <label htmlFor="adresseComplement" className="text-sm font-medium text-foreground">Complément d'adresse</label>
