@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { createClient, updateClient, type ActionState } from "@/features/clients/actions/client-actions";
 import { TypeClient, StatutClient } from "@/generated/prisma";
 import { CustomSelect } from "@/components/ui/custom-select";
+import { CompanySearchButton, type CompanyData } from "@/features/clients/components/company-search-button";
 
 interface ClientFormProps {
   initialData?: any;
@@ -37,6 +38,30 @@ export function ClientForm({ initialData }: ClientFormProps) {
       toast.error("Veuillez vérifier les champs du formulaire.");
     }
   }, [state, router]);
+
+  const handleCompanySelect = (company: CompanyData) => {
+    // Utilisation directe du DOM pour pré-remplir les champs
+    // car le formulaire utilise nativement FormData et defaultValue
+    const setInputValue = (id: string, value: string) => {
+      const el = document.getElementById(id) as HTMLInputElement;
+      if (el) el.value = value;
+    };
+
+    setInputValue("raisonSociale", company.nom);
+    setInputValue("nom", company.nom); // Par défaut, on met la RS comme nom commercial
+    setInputValue("siret", company.siret);
+    setInputValue("adresse", company.adresse);
+    setInputValue("codePostal", company.codePostal);
+    setInputValue("ville", company.ville);
+    
+    // Bonus UX: Calcul du numéro de TVA intracommunautaire français à partir du SIREN
+    if (company.siret && company.siret.length >= 9) {
+      const siren = company.siret.substring(0, 9);
+      const cle = (12 + 3 * (parseInt(siren, 10) % 97)) % 97;
+      const cleStr = cle.toString().padStart(2, "0");
+      setInputValue("numeroTVA", `FR${cleStr}${siren}`);
+    }
+  };
 
   const isParticulier = selectedType === TypeClient.PARTICULIER;
   const isSyndicOrAgence = selectedType === TypeClient.SYNDIC || selectedType === TypeClient.AGENCE_IMMOBILIERE;
@@ -90,7 +115,12 @@ export function ClientForm({ initialData }: ClientFormProps) {
 
       {/* Informations Générales */}
       <div className="border-t border-border pt-6">
-        <h3 className="text-lg font-medium text-primary mb-4">Informations Générales</h3>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+          <h3 className="text-lg font-medium text-primary">Informations Générales</h3>
+          {!isParticulier && (
+            <CompanySearchButton onSelect={handleCompanySelect} />
+          )}
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           
           {/* NOM / RAISON SOCIALE */}
