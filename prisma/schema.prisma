@@ -16,6 +16,7 @@ model User {
 
   sessions Session[]
   clients  Client[]
+  devis    Devis[]
 
   @@map("users")
 }
@@ -56,8 +57,8 @@ model Client {
   statut    StatutClient @default(PROSPECT)
 
   // Informations Générales (Particulier: Nom de famille / Entreprise: Raison sociale)
-  nom    String
-  prenom String? // Seulement pour particulier
+  nom           String
+  prenom        String? // Seulement pour particulier
   raisonSociale String? // Seulement pour entreprise
 
   // Coordonnées principales (Particulier ou Entreprise)
@@ -93,8 +94,70 @@ model Client {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user  User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  devis Devis[]
 
   @@index([userId])
   @@map("clients")
+}
+
+enum StatutDevis {
+  BROUILLON
+  ENVOYE
+  ACCEPTE
+  REFUSE
+  EXPIRE
+}
+
+model Devis {
+  id           String      @id @default(cuid())
+  numero       String      @unique // Ex: DEV-2023-0001
+  dateCreation DateTime    @default(now())
+  dateValidite DateTime
+  statut       StatutDevis @default(BROUILLON)
+
+  // Montants
+  totalHT  Float @default(0)
+  totalTVA Float @default(0)
+  totalTTC Float @default(0)
+
+  // Informations complémentaires
+  notes      String? @db.Text
+  conditions String? @db.Text
+
+  // Relations
+  clientId String
+  client   Client       @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  userId   String
+  user     User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lignes   LigneDevis[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([clientId])
+  @@index([userId])
+  @@map("devis")
+}
+
+model LigneDevis {
+  id             String @id @default(cuid())
+  description    String @db.Text
+  quantite       Float  @default(1)
+  prixUnitaireHT Float
+  tauxTVA        Float  @default(20.0) // 20.0, 10.0, 5.5, etc.
+
+  // Montants calculés
+  totalHT  Float
+  totalTVA Float
+  totalTTC Float
+
+  ordre Int @default(0) // Pour garder l'ordre des lignes
+
+  // Relation
+  devisId String
+  devis   Devis  @relation(fields: [devisId], references: [id], onDelete: Cascade)
+
+  @@index([devisId])
+  @@map("lignes_devis")
 }
