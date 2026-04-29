@@ -38,23 +38,23 @@ export default async function DevisPage() {
               {totalCount} Total
             </span>
             
-            {/* Badges de comptage par statut */}
-            <div className="flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium transition-colors border bg-muted/50 text-muted-foreground border-border">
+            {/* Badges de comptage par statut - Design exact des clients */}
+            <div className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium transition-colors border bg-muted/50 text-muted-foreground border-border">
               <Clock className="w-3.5 h-3.5" />
               {counts.brouillon} Brouillon{counts.brouillon !== 1 ? 's' : ''}
             </div>
 
-            <div className="flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium transition-colors border bg-blue-500/10 text-blue-600 border-blue-500/20">
+            <div className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium transition-colors border bg-blue-500/10 text-blue-600 border-blue-500/20">
               <Send className="w-3.5 h-3.5" />
               {counts.envoye} Envoyé{counts.envoye !== 1 ? 's' : ''}
             </div>
 
-            <div className="flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium transition-colors border bg-emerald-500/10 text-emerald-600 border-emerald-500/20">
+            <div className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium transition-colors border bg-emerald-500/10 text-emerald-600 border-emerald-500/20">
               <CheckCircle2 className="w-3.5 h-3.5" />
               {counts.accepte} Accepté{counts.accepte !== 1 ? 's' : ''}
             </div>
 
-            <div className="flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium transition-colors border bg-rose-500/10 text-rose-600 border-rose-500/20">
+            <div className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium transition-colors border bg-rose-500/10 text-rose-600 border-rose-500/20">
               <XCircle className="w-3.5 h-3.5" />
               {counts.refuse} Refusé{counts.refuse !== 1 ? 's' : ''}
             </div>
