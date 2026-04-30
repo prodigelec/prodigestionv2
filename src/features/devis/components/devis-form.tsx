@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Plus, Trash2, Save, X, Calculator } from "lucide-react";
 import { createDevis } from "@/features/devis/actions/devis-actions";
 import { devisSchema, DevisFormValues } from "@/features/devis/validations/devis-validation";
+import { ClientCombobox } from "@/components/ui/client-combobox";
 import { StatutDevis } from "@/generated/prisma";
 import { toast } from "sonner";
 
@@ -142,18 +143,12 @@ export function DevisForm({ clients }: DevisFormProps) {
         <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <label className="text-sm font-medium text-foreground">Client *</label>
-            <select
+            <ClientCombobox 
+              clients={clients}
               value={formData.clientId}
-              onChange={(e) => setFormData({ ...formData, clientId: e.target.value })}
-              className={`w-full h-10 rounded-md border bg-background px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${errors.clientId ? 'border-destructive' : 'border-border'}`}
-            >
-              <option value="">Sélectionner un client...</option>
-              {clients.map((client) => (
-                <option key={client.id} value={client.id}>
-                  {formatClientName(client)} ({client.type.replace(/_/g, " ")})
-                </option>
-              ))}
-            </select>
+              onChange={(val) => setFormData({ ...formData, clientId: val || "" })}
+              error={!!errors.clientId}
+            />
             {errors.clientId && <p className="text-xs text-destructive">{errors.clientId}</p>}
           </div>
 
