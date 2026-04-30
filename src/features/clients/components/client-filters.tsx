@@ -2,8 +2,9 @@
 
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useCallback, useState, useTransition, useEffect } from "react";
-import { TypeClient, StatutClient } from "@/generated/prisma";
+import { StatutClient } from "@/generated/prisma";
 import { Search, X } from "lucide-react";
+import { TypeClientSelect } from "@/features/clients/components/type-client-select";
 
 export function ClientFilters() {
   const router = useRouter();
@@ -60,12 +61,6 @@ export function ClientFilters() {
     });
   };
 
-  const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    startTransition(() => {
-      router.push(`${pathname}?${createQueryString("type", e.target.value)}`);
-    });
-  };
-
   const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     startTransition(() => {
       router.push(`${pathname}?${createQueryString("statut", e.target.value)}`);
@@ -98,18 +93,14 @@ export function ClientFilters() {
 
       {/* Filtres Selects */}
       <div className="flex gap-4 sm:w-auto">
-        <select
+        <TypeClientSelect
           value={currentType}
-          onChange={handleTypeChange}
-          className="h-10 rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-colors hover:border-primary/50"
-        >
-          <option value="TOUS">Tous les types</option>
-          {Object.values(TypeClient).map((type) => (
-            <option key={type} value={type}>
-              {type.replace(/_/g, " ")}
-            </option>
-          ))}
-        </select>
+          onChange={(value) => {
+            startTransition(() => {
+              router.push(`${pathname}?${createQueryString("type", value)}`);
+            });
+          }}
+        />
 
         <select
           value={currentStatus}

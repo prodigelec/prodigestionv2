@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { Plus, Trash2, Save, X, Calculator } from "lucide-react";
 import { createDevis } from "@/features/devis/actions/devis-actions";
 import { devisSchema, DevisFormValues } from "@/features/devis/validations/devis-validation";
-import { ClientCombobox } from "@/components/ui/client-combobox";
+import { CustomSelect } from "@/components/ui/custom-select";
+import { TypeClientSelect } from "@/features/clients/components/type-client-select";
 import { StatutDevis } from "@/generated/prisma";
 import { toast } from "sonner";
 
@@ -25,6 +26,7 @@ export function DevisForm({ clients }: DevisFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [typeFilter, setTypeFilter] = useState("TOUS");
 
   // Valeurs par défaut avec une date de validité à +30 jours
   const defaultDateValidite = new Date();
@@ -131,23 +133,49 @@ export function DevisForm({ clients }: DevisFormProps) {
     return client.raisonSociale || client.nom;
   };
 
+  const filteredClients =
+    typeFilter === "TOUS" ? clients : clients.filter((client) => client.type === typeFilter);
+
+  const clientOptions = [
+    { value: "", label: "Sélectionnez un client" },
+    ...filteredClients.map((client) => ({
+      value: client.id,
+      label: `${formatClientName(client)} (${client.type.replace(/_/g, " ")})`,
+    })),
+  ];
+
+  const handleTypeFilterChange = (value: string) => {
+    setTypeFilter(value);
+    if (value === "TOUS" || !formData.clientId) return;
+    const selectedClient = clients.find((client) => client.id === formData.clientId);
+    if (selectedClient && selectedClient.type !== value) {
+      setFormData((prev) => ({ ...prev, clientId: "" }));
+    }
+  };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
       {/* Section Client et Validité */}
-      <div className="bg-surface border border-border rounded-xl shadow-sm overflow-hidden">
+      <div className="bg-surface border border-border rounded-xl shadow-sm">
         <div className="p-6 border-b border-border bg-muted/20">
           <h2 className="text-lg font-semibold text-foreground">Informations Générales</h2>
           <p className="text-sm text-muted-foreground">Sélectionnez le client et les dates du devis</p>
         </div>
         
-        <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-foreground">Type de client</label>
+            <TypeClientSelect value={typeFilter} onChange={handleTypeFilterChange} />
+          </div>
+
           <div className="space-y-2">
             <label className="text-sm font-medium text-foreground">Client *</label>
-            <ClientCombobox 
-              clients={clients}
+            <CustomSelect
+              name="clientId"
               value={formData.clientId}
-              onChange={(val) => setFormData({ ...formData, clientId: val || "" })}
-              error={!!errors.clientId}
+              onChange={(val) => setFormData({ ...formData, clientId: val })}
+              options={clientOptions}
+              className={errors.clientId ? "border-destructive" : ""}
             />
             {errors.clientId && <p className="text-xs text-destructive">{errors.clientId}</p>}
           </div>
