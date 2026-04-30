@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Plus, Trash2, Save, X, Calculator } from "lucide-react";
 import { createDevis } from "@/features/devis/actions/devis-actions";
 import { devisSchema, DevisFormValues } from "@/features/devis/validations/devis-validation";
+import { AddressSearchAutocomplete } from "@/components/ui/address-search-autocomplete";
 import { CustomSelect } from "@/components/ui/custom-select";
 import { TypeClientSelect } from "@/features/clients/components/type-client-select";
 import { StatutDevis } from "@/generated/prisma";
@@ -16,6 +17,10 @@ interface ClientLight {
   nom: string;
   prenom: string | null;
   raisonSociale: string | null;
+  adresse: string | null;
+  adresseComplement: string | null;
+  codePostal: string | null;
+  ville: string | null;
 }
 
 interface DevisFormProps {
@@ -27,6 +32,10 @@ export function DevisForm({ clients }: DevisFormProps) {
   const [isPending, startTransition] = useTransition();
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [typeFilter, setTypeFilter] = useState("TOUS");
+  const [isChantierAddressDifferent, setIsChantierAddressDifferent] = useState(false);
+  const [chantierAddress, setChantierAddress] = useState("");
+  const [chantierCodePostal, setChantierCodePostal] = useState("");
+  const [chantierVille, setChantierVille] = useState("");
 
   // Valeurs par défaut avec une date de validité à +30 jours
   const defaultDateValidite = new Date();
@@ -143,6 +152,10 @@ export function DevisForm({ clients }: DevisFormProps) {
       label: `${formatClientName(client)} (${client.type.replace(/_/g, " ")})`,
     })),
   ];
+  const selectedClient = clients.find((client) => client.id === formData.clientId);
+  const hasSelectedClientAddress =
+    !!selectedClient &&
+    !!(selectedClient.adresse || selectedClient.adresseComplement || selectedClient.codePostal || selectedClient.ville);
 
   const handleTypeFilterChange = (value: string) => {
     setTypeFilter(value);
@@ -150,19 +163,21 @@ export function DevisForm({ clients }: DevisFormProps) {
     const selectedClient = clients.find((client) => client.id === formData.clientId);
     if (selectedClient && selectedClient.type !== value) {
       setFormData((prev) => ({ ...prev, clientId: "" }));
+      setIsChantierAddressDifferent(false);
+      setChantierAddress("");
+      setChantierCodePostal("");
+      setChantierVille("");
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8">
+    <form onSubmit={handleSubmit} className="space-y-10">
       {/* Section Client et Validité */}
-      <div className="bg-surface border border-border rounded-xl shadow-sm">
-        <div className="p-6 border-b border-border bg-muted/20">
-          <h2 className="text-lg font-semibold text-foreground">Informations Générales</h2>
-          <p className="text-sm text-muted-foreground">Sélectionnez le client et les dates du devis</p>
-        </div>
-        
-        <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="rounded-xl border border-border bg-surface p-6 shadow-sm">
+        <h3 className="text-lg font-medium text-primary">Informations Générales</h3>
+        <p className="mt-1 text-sm text-muted-foreground">Sélectionnez le client, la date de validité et l'adresse de chantier.</p>
+
+        <div className="mt-4 grid grid-cols-1 gap-6 md:grid-cols-3">
           <div className="space-y-2">
             <label className="text-sm font-medium text-foreground">Type de client</label>
             <TypeClientSelect value={typeFilter} onChange={handleTypeFilterChange} />
@@ -173,7 +188,13 @@ export function DevisForm({ clients }: DevisFormProps) {
             <CustomSelect
               name="clientId"
               value={formData.clientId}
-              onChange={(val) => setFormData({ ...formData, clientId: val })}
+              onChange={(val) => {
+                setFormData({ ...formData, clientId: val });
+                setIsChantierAddressDifferent(false);
+                setChantierAddress("");
+                setChantierCodePostal("");
+                setChantierVille("");
+              }}
               options={clientOptions}
               className={errors.clientId ? "border-destructive" : ""}
             />
@@ -191,26 +212,106 @@ export function DevisForm({ clients }: DevisFormProps) {
             {errors.dateValidite && <p className="text-xs text-destructive">{errors.dateValidite}</p>}
           </div>
         </div>
+
+        {selectedClient && (
+          <div className="mt-4 space-y-4">
+            <div className="rounded-lg border border-border bg-background p-4">
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  Adresse du client
+                </p>
+                <button
+                  type="button"
+                  disabled={!hasSelectedClientAddress}
+                  onClick={() => setIsChantierAddressDifferent((prev) => !prev)}
+                  className={`rounded-md border px-3 py-1 text-xs font-medium transition-colors ${
+                    isChantierAddressDifferent
+                      ? "border-primary/40 bg-primary/10 text-primary"
+                      : "border-border bg-background text-muted-foreground hover:text-foreground"
+                  } disabled:cursor-not-allowed disabled:opacity-50`}
+                >
+                  {isChantierAddressDifferent
+                    ? "Adresse chantier différente: oui"
+                    : "Adresse chantier différente: non"}
+                </button>
+              </div>
+              {hasSelectedClientAddress ? (
+                <div className="mt-2 space-y-0.5 text-sm text-foreground">
+                  {selectedClient.adresse && <p>{selectedClient.adresse}</p>}
+                  {selectedClient.adresseComplement && <p>{selectedClient.adresseComplement}</p>}
+                  {(selectedClient.codePostal || selectedClient.ville) && (
+                    <p>{[selectedClient.codePostal, selectedClient.ville].filter(Boolean).join(" ")}</p>
+                  )}
+                </div>
+              ) : (
+                <p className="mt-2 text-sm italic text-muted-foreground">
+                  Aucune adresse renseignée pour ce client.
+                </p>
+              )}
+            </div>
+
+            {isChantierAddressDifferent && (
+              <div className="rounded-lg border border-border bg-background p-4">
+                <label className="mb-2 block text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  Adresse du chantier
+                </label>
+                <AddressSearchAutocomplete
+                  defaultValue={chantierAddress}
+                  placeholder="Rechercher l'adresse du chantier..."
+                  onSelect={(address) => {
+                    setChantierAddress(address.adresse);
+                    setChantierCodePostal(address.codePostal);
+                    setChantierVille(address.ville);
+                  }}
+                />
+
+                <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
+                  <div className="space-y-1">
+                    <label className="text-xs font-medium text-muted-foreground">Code postal</label>
+                    <input
+                      type="text"
+                      value={chantierCodePostal}
+                      onChange={(e) => setChantierCodePostal(e.target.value)}
+                      placeholder="75000"
+                      className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-medium text-muted-foreground">Ville</label>
+                    <input
+                      type="text"
+                      value={chantierVille}
+                      onChange={(e) => setChantierVille(e.target.value)}
+                      placeholder="Paris"
+                      className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Section Lignes du devis */}
-      <div className="bg-surface border border-border rounded-xl shadow-sm overflow-hidden">
-        <div className="p-6 border-b border-border bg-muted/20 flex justify-between items-center">
+      <div className="rounded-xl border border-border bg-surface p-6 shadow-sm">
+        <div className="mb-4 flex items-center justify-between gap-4">
           <div>
-            <h2 className="text-lg font-semibold text-foreground">Lignes du devis</h2>
+            <h3 className="text-lg font-medium text-primary">Lignes du devis</h3>
             <p className="text-sm text-muted-foreground">Ajoutez les produits ou services</p>
           </div>
           <button
             type="button"
             onClick={handleAddLigne}
-            className="inline-flex items-center gap-2 rounded-md bg-primary/10 px-3 py-1.5 text-sm font-medium text-primary hover:bg-primary/20 transition-colors"
+            className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md border border-border bg-background px-4 py-2 text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-primary-light/25 hover:text-primary"
           >
             <Plus className="w-4 h-4" />
             Ajouter une ligne
           </button>
         </div>
 
-        <div className="p-6 space-y-4">
+        <div className="space-y-4">
           {/* En-têtes du tableau (visible uniquement sur desktop) */}
           <div className="hidden md:grid grid-cols-12 gap-4 pb-2 text-sm font-medium text-muted-foreground border-b border-border">
             <div className="col-span-5">Description</div>
@@ -295,7 +396,7 @@ export function DevisForm({ clients }: DevisFormProps) {
         </div>
 
         {/* Résumé des totaux */}
-        <div className="p-6 bg-muted/30 border-t border-border flex flex-col items-end space-y-2">
+        <div className="mt-4 flex flex-col items-end space-y-2 rounded-lg border border-border bg-muted/20 p-4">
           <div className="flex items-center gap-8 text-sm text-muted-foreground w-full md:w-64 justify-between">
             <span>Total HT</span>
             <span className="font-medium text-foreground">{new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(totals.totalHT)}</span>
@@ -312,12 +413,9 @@ export function DevisForm({ clients }: DevisFormProps) {
       </div>
 
       {/* Section Notes et Conditions */}
-      <div className="bg-surface border border-border rounded-xl shadow-sm overflow-hidden">
-        <div className="p-6 border-b border-border bg-muted/20">
-          <h2 className="text-lg font-semibold text-foreground">Notes et Conditions</h2>
-        </div>
-        
-        <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="rounded-xl border border-border bg-surface p-6 shadow-sm">
+        <h3 className="text-lg font-medium text-primary">Notes et Conditions</h3>
+        <div className="mt-4 grid grid-cols-1 gap-6 md:grid-cols-2">
           <div className="space-y-2">
             <label className="text-sm font-medium text-foreground">Notes internes (non visibles sur le PDF)</label>
             <textarea
@@ -346,7 +444,7 @@ export function DevisForm({ clients }: DevisFormProps) {
         <button
           type="button"
           onClick={() => router.back()}
-          className="inline-flex items-center gap-2 rounded-md border border-border bg-background px-4 py-2 text-sm font-medium text-foreground hover:bg-muted transition-colors"
+          className="inline-flex h-9 items-center justify-center gap-2 whitespace-nowrap rounded-md border border-border bg-background px-4 py-2 text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-primary-light/25 hover:text-primary"
         >
           <X className="w-4 h-4" />
           Annuler
@@ -354,7 +452,7 @@ export function DevisForm({ clients }: DevisFormProps) {
         <button
           type="submit"
           disabled={isPending}
-          className="inline-flex items-center gap-2 rounded-md bg-primary px-6 py-2 text-sm font-medium text-primary-light shadow hover:bg-primary/90 transition-all disabled:opacity-50"
+          className="inline-flex h-9 items-center justify-center gap-2 whitespace-nowrap rounded-md bg-primary px-6 py-2 text-sm font-medium text-primary-light shadow transition-colors hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50"
         >
           {isPending ? (
             <>
