@@ -4,6 +4,11 @@ import { StatutDevis } from "@/generated/prisma";
 // Schéma pour une ligne de devis
 const ligneDevisSchema = Joi.object({
   id: Joi.string().optional(), // Présent uniquement si on modifie une ligne existante
+  typeOperation: Joi.string().valid("SERVICE", "MARCHANDISE").required().messages({
+    "any.only": "Le type d'opération n'est pas valide",
+    "any.required": "Le type d'opération est requis",
+  }),
+
   description: Joi.string().required().messages({
     "string.empty": "La description de la ligne est requise",
     "any.required": "La description de la ligne est requise",
@@ -61,6 +66,7 @@ export type DevisFormValues = {
   conditions?: string;
   lignes: {
     id?: string;
+    typeOperation: "SERVICE" | "MARCHANDISE";
     description: string;
     quantite: number;
     prixUnitaireHT: number;

@@ -2,6 +2,7 @@
 
 import { prisma } from "@/app/lib/db";
 import { verifySession } from "@/app/lib/session";
+import { decryptSensitiveData } from "@/app/lib/encryption";
 import { StatutDevis } from "@/generated/prisma";
 import { generateDevisNumber } from "../utils/devis-number";
 import { revalidatePath } from "next/cache";
@@ -78,13 +79,21 @@ export async function getClientsForSelect() {
         nom: true,
         prenom: true,
         raisonSociale: true,
+        adresse: true,
+        adresseComplement: true,
+        codePostal: true,
+        ville: true,
+
       },
       orderBy: {
         createdAt: "desc",
       }
     });
 
-    return { data: clients };
+    const decryptedClients = clients.map((client) => decryptSensitiveData(client));
+
+    return { data: decryptedClients };
+
   } catch (error) {
     console.error("[GET_CLIENTS_SELECT_ERROR]", error);
     return { error: "Impossible de récupérer les clients" };

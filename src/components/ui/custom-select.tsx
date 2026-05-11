@@ -5,16 +5,17 @@ interface CustomSelectProps {
   onChange: (value: string) => void;
   name: string;
   options: { value: string; label: string }[];
+  className?: string;
 }
 
-export function CustomSelect({ value, onChange, name, options }: CustomSelectProps) {
+export function CustomSelect({ value, onChange, name, options, className = "" }: CustomSelectProps) {
   // Trouver le label correspondant à la valeur actuelle
   const currentLabel = options.find((opt) => opt.value === value)?.label || value;
 
   return (
     <Listbox value={value} onChange={onChange} name={name}>
       <div className="relative">
-        <ListboxButton className="flex h-10 w-full items-center justify-between rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none hover:border-primary/50 transition-colors disabled:cursor-not-allowed disabled:opacity-50">
+        <ListboxButton className={`flex h-10 w-full items-center justify-between rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none hover:border-primary/50 transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${className}`}>
           <span className="block truncate">{currentLabel}</span>
           <span className="pointer-events-none flex items-center pr-2">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-50">
@@ -22,7 +23,7 @@ export function CustomSelect({ value, onChange, name, options }: CustomSelectPro
             </svg>
           </span>
         </ListboxButton>
-        <ListboxOptions className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md border border-border bg-background py-1 text-base shadow-lg focus:outline-none sm:text-sm">
+        <ListboxOptions className="absolute left-0 z-[100] mt-1 max-h-60 w-full overflow-auto rounded-md border border-border bg-background py-1 text-base shadow-lg focus:outline-none sm:text-sm">
           {options.map((option) => (
             <ListboxOption
               key={option.value}

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Eye, Edit2, FileText } from "lucide-react";
-import { StatutDevis } from "@/generated/prisma";
+import { StatutDevis, TypeClient } from "@/generated/prisma";
 
 interface ClientLight {
   nom: string;
@@ -98,8 +98,16 @@ export function DevisList({ devis }: DevisListProps) {
                     {new Date(d.dateCreation).toLocaleDateString('fr-FR')}
                   </td>
                   <td className="px-6 py-4">
-                    <div className="font-medium text-foreground">{formatClientName(d.client)}</div>
-                    <div className="text-xs text-muted-foreground">{d.client.type.replace(/_/g, " ")}</div>
+                    <div className="font-medium text-foreground mb-1">{formatClientName(d.client)}</div>
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium ${
+                      d.client.type === TypeClient.PARTICULIER ? 'bg-purple-500/10 text-purple-500' :
+                      d.client.type === TypeClient.ENTREPRISE ? 'bg-blue-500/10 text-blue-500' :
+                      d.client.type === TypeClient.SYNDIC ? 'bg-teal-500/10 text-teal-500' :
+                      d.client.type === TypeClient.AGENCE_IMMOBILIERE ? 'bg-rose-500/10 text-rose-500' :
+                      'bg-muted text-muted-foreground'
+                    }`}>
+                      {d.client.type.replace(/_/g, " ")}
+                    </span>
                   </td>
                   <td className="px-6 py-4 text-right font-semibold text-foreground">
                     {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(d.totalTTC)}
