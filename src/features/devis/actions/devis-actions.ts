@@ -83,6 +83,7 @@ export async function getClientsForSelect() {
         adresseComplement: true,
         codePostal: true,
         ville: true,
+
       },
       orderBy: {
         createdAt: "desc",
@@ -92,6 +93,7 @@ export async function getClientsForSelect() {
     const decryptedClients = clients.map((client) => decryptSensitiveData(client));
 
     return { data: decryptedClients };
+
   } catch (error) {
     console.error("[GET_CLIENTS_SELECT_ERROR]", error);
     return { error: "Impossible de récupérer les clients" };

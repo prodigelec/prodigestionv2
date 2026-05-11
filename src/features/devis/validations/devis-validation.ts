@@ -8,6 +8,7 @@ const ligneDevisSchema = Joi.object({
     "any.only": "Le type d'opération n'est pas valide",
     "any.required": "Le type d'opération est requis",
   }),
+
   description: Joi.string().required().messages({
     "string.empty": "La description de la ligne est requise",
     "any.required": "La description de la ligne est requise",

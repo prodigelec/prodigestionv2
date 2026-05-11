@@ -1,5 +1,6 @@
 "use client";
 
+
 import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Trash2, Save, X, Calculator } from "lucide-react";
@@ -9,6 +10,7 @@ import { devisSchema, DevisFormValues } from "@/features/devis/validations/devis
 import { AddressSearchAutocomplete } from "@/components/ui/address-search-autocomplete";
 import { CustomSelect } from "@/components/ui/custom-select";
 import { TypeClientSelect } from "@/features/clients/components/type-client-select";
+
 import { StatutDevis } from "@/generated/prisma";
 import { toast } from "sonner";
 
@@ -31,6 +33,7 @@ interface DevisFormProps {
 export function DevisForm({ clients }: DevisFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+
   const [isAiGenerating, setIsAiGenerating] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [typeFilter, setTypeFilter] = useState("TOUS");
@@ -98,6 +101,7 @@ export function DevisForm({ clients }: DevisFormProps) {
       lignes: [
         ...prev.lignes,
         { typeOperation: "SERVICE", description: "", quantite: 1, prixUnitaireHT: 0, tauxTVA: 20 }
+
       ]
     }));
   };
@@ -277,6 +281,7 @@ export function DevisForm({ clients }: DevisFormProps) {
               options={clientOptions}
               className={errors.clientId ? "border-destructive" : ""}
             />
+
             {errors.clientId && <p className="text-xs text-destructive">{errors.clientId}</p>}
           </div>
 
@@ -403,6 +408,7 @@ export function DevisForm({ clients }: DevisFormProps) {
         <div className="mb-4 flex items-center justify-between gap-4">
           <div>
             <h3 className="text-lg font-medium text-primary">Lignes du devis</h3>
+
             <p className="text-sm text-muted-foreground">Ajoutez les produits ou services</p>
           </div>
           <button
@@ -414,6 +420,7 @@ export function DevisForm({ clients }: DevisFormProps) {
             Ajouter une ligne
           </button>
         </div>
+
 
         <div className="space-y-4">
           {/* En-têtes du tableau (visible uniquement sur desktop) */}
@@ -459,6 +466,7 @@ export function DevisForm({ clients }: DevisFormProps) {
                 {errors[`lignes.${index}.typeOperation`] && (
                   <p className="text-xs text-destructive">{errors[`lignes.${index}.typeOperation`]}</p>
                 )}
+
               </div>
 
               {/* Quantité */}
@@ -726,6 +734,7 @@ export function DevisForm({ clients }: DevisFormProps) {
           </div>
         </div>
       )}
+
     </form>
   );
 }
