@@ -9,6 +9,7 @@ import { genererDescriptionIA, ameliorerDescriptionIA } from "@/features/devis/a
 import { devisSchema, DevisFormValues } from "@/features/devis/validations/devis-validation";
 import { AddressSearchAutocomplete } from "@/components/ui/address-search-autocomplete";
 import { CustomSelect } from "@/components/ui/custom-select";
+import { ValiditeSelect, computeDateValidite } from "@/components/ui/validite-select";
 import { TypeClientSelect } from "@/features/clients/components/type-client-select";
 
 import { StatutDevis } from "@/generated/prisma";
@@ -52,6 +53,8 @@ export function DevisForm({ clients }: DevisFormProps) {
   const [chantierAddress, setChantierAddress] = useState("");
   const [chantierCodePostal, setChantierCodePostal] = useState("");
   const [chantierVille, setChantierVille] = useState("");
+
+  const [validiteDuree, setValiditeDuree] = useState(30);
 
   // Valeurs par défaut avec une date de validité à +30 jours
   const defaultDateValidite = new Date();
@@ -285,16 +288,14 @@ export function DevisForm({ clients }: DevisFormProps) {
             {errors.clientId && <p className="text-xs text-destructive">{errors.clientId}</p>}
           </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground">Date de validité *</label>
-            <input
-              type="date"
-              value={formData.dateValidite}
-              onChange={(e) => setFormData({ ...formData, dateValidite: e.target.value })}
-              className={`w-full h-10 rounded-md border bg-background px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${errors.dateValidite ? 'border-destructive' : 'border-border'}`}
-            />
-            {errors.dateValidite && <p className="text-xs text-destructive">{errors.dateValidite}</p>}
-          </div>
+          <ValiditeSelect
+            value={validiteDuree}
+            onChange={(jours, date) => {
+              setValiditeDuree(jours);
+              setFormData((prev) => ({ ...prev, dateValidite: date }));
+            }}
+            error={errors.dateValidite}
+          />
         </div>
 
         {selectedClient && (
