@@ -19,7 +19,7 @@ interface Props {
   index: number;
   errors: Record<string, string>;
   canRemove: boolean;
-  onDescriptionClick: (index: number) => void;
+  onDescriptionClick: (index: number, description: string) => void;
   onLigneChange: (index: number, field: string, value: string | number) => void;
   onRemove: (index: number) => void;
 }
@@ -31,7 +31,7 @@ export function DevisLigneRow({ ligne, index, errors, canRemove, onDescriptionCl
         <label className="md:hidden text-xs font-medium text-muted-foreground">Description</label>
         <button
           type="button"
-          onClick={() => onDescriptionClick(index)}
+          onClick={() => onDescriptionClick(index, ligne.description || "")}
           className={`w-full rounded-md border bg-background px-3 py-2 text-left text-sm text-foreground transition-colors hover:border-primary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${errors[`lignes.${index}.description`] ? "border-destructive" : "border-border"}`}
         >
           {ligne.description

@@ -12,7 +12,7 @@ interface Props {
   onAddLigne: () => void;
   onRemoveLigne: (index: number) => void;
   onLigneChange: (index: number, field: string, value: string | number) => void;
-  onOpenDescriptionModal: (index: number) => void;
+  onOpenDescriptionModal: (index: number, description: string) => void;
   totals: { totalHT: number; totalTVA: number; totalTTC: number };
 }
 
