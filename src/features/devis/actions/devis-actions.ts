@@ -164,3 +164,28 @@ export async function createDevis(data: any) {
     return { error: "Erreur lors de la création du devis" };
   }
 }
+
+export async function getDevisById(id: string) {
+  try {
+    const sessionData = await verifySession();
+    if (!sessionData || !sessionData.user) {
+      return { error: "Non autorisé" };
+    }
+
+    const devis = await prisma.devis.findFirst({
+      where: { id, userId: sessionData.user.id },
+      include: {
+        client: true,
+        lignes: { orderBy: { ordre: "asc" } },
+      },
+    });
+
+    if (!devis) return { error: "Devis introuvable" };
+
+    const decryptedClient = decryptSensitiveData(devis.client);
+    return { data: { ...devis, client: decryptedClient } };
+  } catch (error) {
+    console.error("[GET_DEVIS_BY_ID_ERROR]", error);
+    return { error: "Impossible de récupérer le devis" };
+  }
+}
