@@ -75,8 +75,14 @@ export function useDevisForm(clients: ClientLight[]) {
     }
     startTransition(async () => {
       const result = await createDevis(formData);
-      if (result.error) { toast.error(result.error); return; }
+      if (result.error || !result.data) { toast.error(result.error ?? "Erreur inconnue"); return; }
       toast.success("Le devis a été créé avec succès !");
+      const link = document.createElement("a");
+      link.href = `/api/devis/${result.data.id}/pdf`;
+      link.setAttribute("download", `${result.data.numero}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
       router.push("/devis");
       router.refresh();
     });

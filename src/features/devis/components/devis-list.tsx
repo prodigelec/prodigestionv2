@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Eye, Edit2, FileText } from "lucide-react";
+import { Eye, Edit2, FileText, Download } from "lucide-react";
 import { StatutDevis, TypeClient } from "@/generated/prisma";
 
 interface ClientLight {
@@ -123,13 +123,21 @@ export function DevisList({ devis }: DevisListProps) {
                     >
                       <Eye className="w-4 h-4" />
                     </Link>
-                    <Link 
+                    <Link
                       href={`/devis/${d.id}/edit`}
                       className="inline-flex items-center justify-center p-2 text-amber-500 hover:bg-amber-500/10 hover:scale-110 rounded-md transition-all"
                       title="Modifier le devis"
                     >
                       <Edit2 className="w-4 h-4" />
                     </Link>
+                    <a
+                      href={`/api/devis/${d.id}/pdf`}
+                      download={`${d.numero}.pdf`}
+                      className="inline-flex items-center justify-center p-2 text-emerald-500 hover:bg-emerald-500/10 hover:scale-110 rounded-md transition-all"
+                      title="Télécharger le PDF"
+                    >
+                      <Download className="w-4 h-4" />
+                    </a>
                   </td>
                 </tr>
               ))}
