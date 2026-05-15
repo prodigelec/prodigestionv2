@@ -45,7 +45,7 @@ export function useDevisForm(clients: ClientLight[]) {
     dateValidite: computeDateValidite(30),
     statut: StatutDevis.BROUILLON,
     notes: "",
-    conditions: "Conditions de paiement : 30 jours à réception de facture.\nValidité du devis : 30 jours.",
+    conditions: "Validité du devis : 30 jours.",
     lignes: [DEFAULT_LIGNE],
   });
 
