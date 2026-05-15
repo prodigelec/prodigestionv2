@@ -108,7 +108,14 @@ export function useDevisForm(clients: ClientLight[]) {
 
   const handleValiditeChange = (jours: number, date: string) => {
     setValiditeDuree(jours);
-    setFormData((prev) => ({ ...prev, dateValidite: date }));
+    setFormData((prev) => ({
+      ...prev,
+      dateValidite: date,
+      conditions: (prev.conditions ?? "").replace(
+        /Validité du devis : \d+ jours\./,
+        `Validité du devis : ${jours} jours.`
+      ),
+    }));
   };
 
   const handleAddLigne = () =>
